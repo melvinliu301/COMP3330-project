@@ -1,14 +1,28 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { useState, useEffect } from "react";
 import BottomTabs from "./src/components/BottomTabs";
+import LoginScreen from "./src/screens/LoginScreen";
 import { NavigationContainer } from "@react-navigation/native";
+import { auth } from "./src/firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 const App = () => {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user);
+            } else {
+                setUser(null);
+            }
+        });
+    }, []);
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <NavigationContainer>
-                <BottomTabs />
+                {user ? <BottomTabs /> : <LoginScreen />}
             </NavigationContainer>
         </GestureHandlerRootView>
     );
