@@ -69,7 +69,7 @@ const BottomTabs = () => {
                         // headerTitle: () => (
                         //     <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Custom title</Text>
                         // ),
-                        // headerShown: true,
+                        headerShown: false,
                     }}
                 >
                     {() => <ListScreen/>}
