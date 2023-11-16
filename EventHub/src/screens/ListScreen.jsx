@@ -2,8 +2,12 @@ import { useState, useEffect, Fragment } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TextInput, Button, TouchableOpacity, Pressable } from 'react-native';
 import { addData, getData } from "../firebase/database";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import CreateEvent from "./CreateEvent";
 
-const ListScreen = () => {
+const Stack = createNativeStackNavigator();
+
+const List = ({navigation}) => {
 
     // remove later, for testing only
     // const [data, setData] = useState([]);
@@ -35,7 +39,7 @@ const ListScreen = () => {
             catagory: ["Dance", "Performance"],
             creator: "Ian",
             location: "Lecture Hall 1, HKU",
-            datetime: "2023/11/19H12:00",
+            datetime: "2023/11/19 12:00",
             latitude: 22.283138717812534,
             longitude: 114.13652991004479,
             duration: "1",
@@ -48,7 +52,7 @@ const ListScreen = () => {
             catagory: ["Music", "Performance"],
             creator: "HKUBand",
             location: "Main Building, HKU",
-            date: "2023/11/19H12:00",
+            datetime: "2023/11/19 12:00",
             latitude: 22.283138717812534,
             longitude: 114.13652991004479,
             duration: "2",
@@ -61,7 +65,20 @@ const ListScreen = () => {
             catagory: ["Academic", "Study"],
             creator: "Falculty of Engineering",
             location: "Innovation Wing, HKU",
-            datetime: "2023/11/31H14:00",
+            datetime: "2023/11/31 14:00",
+            latitude: 22.283138717812534,
+            longitude: 114.13652991004479,
+            duration: "3",
+
+            expanded: false,
+        },
+        {
+            id: "0005",
+            title: "testing",
+            catagory: ["Academic", "Study"],
+            creator: "Falculty of Engineering",
+            location: "Innovation Wing, HKU",
+            datetime: "2023/11/31 14:00",
             latitude: 22.283138717812534,
             longitude: 114.13652991004479,
             duration: "3",
@@ -106,10 +123,11 @@ const ListScreen = () => {
             return (
                 <View>
                     <Text>
-                        Location:{item.location}{'\n'}
+                        {'\n'}
+                        Location: {item.location}{'\n'}
                         Catagory: {item.catagory[0]}{'\n'}
                         Event Holder: {item.creator}{'\n'}
-                        Date: {item.datetime}{'\n'}
+                        Date: {item.datetime}
                         
                     </Text>
                 </View>
@@ -157,18 +175,18 @@ const ListScreen = () => {
                         onPress={handleSort} />
                 </View>
                 
-            <FlatList
-                paddingTop={10}
-                data={filteredData}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-            />
+                <FlatList
+                    paddingTop={10}
+                    data={filteredData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                />
             </View>
         );
     };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.mainContainer}>
             <MyList />
             {/* remove later, for testing only */}
             {/* <Text>Test result (reading from database):</Text>
@@ -180,17 +198,23 @@ const ListScreen = () => {
                     <Text>{"4: " + item.data().test4}</Text>
                 </Fragment> */}
             {/* ))} */}
+            <TouchableOpacity style={styles.createEventButton}
+                onPress={() => navigation.navigate("CreateEvent")}
+            >
+                <Text style={{fontSize: 16}}>Create Event</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        paddingHorizontal: 20,
+    },
+    mainContainer: {
         flex: 1,
         backgroundColor: "white",
-        alignItems: "stretch",
-        justifyContent: "flex-start",
-        paddingHorizontal: 10,
+        justifyContent: "space-between",
     },
     itemContainer: {
         borderWidth: 1,
@@ -205,6 +229,58 @@ const styles = StyleSheet.create({
         backgroundColor: "#001F3F",
         
     },
+    createEventButton: {
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "lightgrey",
+        paddingVertical: 10,
+        width: "100%",
+    },
 });
+
+
+const ListScreen = () => {
+
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: "orange",
+                    borderStyle: "solid",
+                    shadowColor: "transparent",
+                    height: 43.5,
+                },
+                headerTitleStyle: {
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    color: "white",
+                },
+                headerTintColor: "white",
+            }}
+            initialRouteName="List"
+        >
+            <Stack.Screen 
+                name="List" 
+                component={List} 
+                options={{
+                    headerTitle: () => (
+                        <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Event List</Text>
+                    ),    
+                }}
+            />
+            <Stack.Screen 
+                name="CreateEvent" 
+                component={CreateEvent} 
+                options={{
+                    headerTitle: () => (
+                        <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Create Event</Text>
+                    ),    
+                }}
+            />
+
+        </Stack.Navigator>
+    );
+}
+
 
 export default ListScreen;
