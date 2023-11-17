@@ -4,6 +4,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Slider from "@react-native-community/slider";
 import { addData } from "../firebase/database";
+import moment from "moment";
 
 // updates needed: use map to select location, creator
 
@@ -18,7 +19,7 @@ const CreateEvent = ({navigation}) => {
     const [eventEndTime, seteventEndTime] = useState(new Date());
     const [course, setCourse] = useState("");
     const [numOfParticipants, setnumOfParticipants] = useState(0);
-    const [eventCatagory, seteventCatagory] = useState([]);
+    const [eventCategory, seteventCategory] = useState([]);
 
 
     // for dropdown picker
@@ -32,7 +33,7 @@ const CreateEvent = ({navigation}) => {
     ]);
 
     console.log(eventTitle, eventDescription, eventLocation, eventDate.toLocaleDateString(), 
-    eventStartTime.toLocaleTimeString(), eventEndTime.toLocaleTimeString(), course, numOfParticipants, eventCatagory);
+    moment(eventStartTime).format("HH:mm"), moment(eventEndTime).format("HH:mm"), course, numOfParticipants, eventCategory);
 
     return (
         <View style={styles.container}>
@@ -43,7 +44,7 @@ const CreateEvent = ({navigation}) => {
                     <TextInput
                         placeholder=" an interesting title"
                         style={styles.columnInput}
-                        value={eventTitle}
+                        // value={eventTitle}
                         onChangeText={text => seteventTitle(text)}
                     />
                 </View>
@@ -53,7 +54,7 @@ const CreateEvent = ({navigation}) => {
                     <TextInput
                         placeholder=" what is your event about?"
                         style={styles.columnInput}
-                        value={eventDescription}
+                        // value={eventDescription}
                         onChangeText={text => seteventDescription(text)}
                     />
                 </View>
@@ -63,7 +64,7 @@ const CreateEvent = ({navigation}) => {
                     <TextInput
                         placeholder=" where is your event?"
                         style={styles.columnInput}
-                        value={eventLocation}
+                        // value={eventLocation}
                         onChangeText={text => seteventLocation(text)}
                     />
                 </View>
@@ -114,7 +115,7 @@ const CreateEvent = ({navigation}) => {
                     <TextInput
                         placeholder=" (optional)"
                         style={styles.columnInput}
-                        value={course}
+                        // value={course}
                         onChangeText={text => setCourse(text)}
                     />
                 </View>
@@ -138,14 +139,14 @@ const CreateEvent = ({navigation}) => {
 
 
                 <View style={styles.rows}>
-                    <Text style={styles.columnText}>Catagory</Text>
+                    <Text style={styles.columnText}>Category</Text>
                     <View style={styles.dropDownContainer}>
                         <DropDownPicker
                                 open={open}
-                                value={eventCatagory}
+                                value={eventCategory}
                                 items={items}
                                 setOpen={setOpen}
-                                setValue={seteventCatagory}
+                                setValue={seteventCategory}
                                 dropDownContainerStyle={{height: 105}}
                             />
                     </View>
@@ -160,11 +161,11 @@ const CreateEvent = ({navigation}) => {
                         description: eventDescription,
                         location: eventLocation,
                         date: eventDate.toLocaleDateString(),
-                        startTime: eventStartTime.toLocaleTimeString(),
-                        endTime: eventEndTime.toLocaleTimeString(),
+                        startTime: moment(eventStartTime).format("HH:mm"),
+                        endTime: moment(eventEndTime).format("HH:mm"),
                         course: course,
                         numOfParticipants: numOfParticipants,
-                        catagory: eventCatagory,
+                        category: eventCategory,
                     });
                     navigation.navigate("List")}
                 }
@@ -180,6 +181,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "space-between",
+        backgroundColor: "white",
     },
     columnText: {
         flex: 1,
