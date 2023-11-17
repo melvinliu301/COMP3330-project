@@ -13,6 +13,7 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     sendEmailVerification,
+    updateProfile,
 } from "firebase/auth";
 import Dialog, { DialogContent, DialogTitle } from "react-native-popup-dialog";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -48,6 +49,11 @@ const SignUpScreen = ({ navigation }) => {
             if (sendEmail) {
                 await sendEmailVerification(userCredential.user);
             }
+
+            await updateProfile(userCredential.user,    {
+                displayName: username,
+            });
+
 
             await setData("Users", userCredential.user.uid, {
                 username: username,
