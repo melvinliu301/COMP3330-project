@@ -1,11 +1,14 @@
 import { Toasts, toast } from "@backpackapp-io/react-native-toast";
 import * as Location from "expo-location";
-import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Image } from "react-native";
 import MapView from "react-native-maps";
 import { CustomMarker } from "../components/CustomMarker";
+import { getData, getBinaryURL } from "../firebase/database";
 
 const MapScreen = () => {
+    const [events, setEvents] = useState([]);
+
     // Request for location service
     useEffect(() => {
         (async () => {
@@ -16,6 +19,16 @@ const MapScreen = () => {
                 });
                 return;
             }
+        })();
+        (async () => {
+            const data = await getData("Events");
+            const events = data.map((docs) => docs.data());
+            for (const event of events) {
+                if (event?.imagePath) {
+                    event.imageURL = await getBinaryURL(event?.imagePath);
+                }
+            }
+            setEvents(events);
         })();
     }, []);
 
@@ -42,21 +55,22 @@ const MapScreen = () => {
                 showsUserLocation={true}
                 showsBuildings={false}
                 toolbarEnabled={false}
+                zoomControlEnabled={false}
             >
-                <CustomMarker
-                    latitude={22.283416047623675}
-                    longitude={114.13811859533348}
-                    radius={30}
-                    title="Joint Hall Mass Dance"
-                    description="Hallmates are provided with the opportunity to show their efforts in the teamtrains and enjoy themselves throughout the whole process."
-                />
-                <CustomMarker
-                    latitude={22.2827980530834}
-                    longitude={114.13692501232464}
-                    radius={10}
-                    title="Engineering Society Welfare Booth"
-                    description="Grab your welfare pack if you are from enginnering faculty!"
-                />
+                {events.map((event, i) => (
+                    <CustomMarker
+                        key={i}
+                        latitude={event?.latitude}
+                        longitude={event?.longitude}
+                        radius={event?.radius}
+                        title={event?.title}
+                        description={event?.description}
+                        imageURL={event?.imageURL}
+                        date={event?.date}
+                        startTime={event?.startTime}
+                        endTime={event?.endTime}
+                    />
+                ))}
             </MapView>
             <Toasts />
         </View>

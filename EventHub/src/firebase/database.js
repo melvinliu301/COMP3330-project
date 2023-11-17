@@ -1,7 +1,17 @@
 import { app } from "./base";
-import { getFirestore, collection, doc, getDocs, addDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+    getFirestore,
+    collection,
+    doc,
+    getDocs,
+    addDoc,
+    setDoc,
+    updateDoc,
+} from "firebase/firestore";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const db = getFirestore(app);
+const storage = getStorage();
 
 const addData = async (collectionName, data) => {
     const docRef = await addDoc(collection(db, collectionName), data);
@@ -28,6 +38,16 @@ const getData = async (collectionName) => {
 const updateData = async (collectionName, id, data) => {
     const docRef = await updateDoc(doc(db, collectionName, id), data);
     return docRef.id;
-}
+};
 
-export { addData, setData, getData, updateData };
+const getBinaryURL = async (path) => {
+    const starsRef = ref(storage, path);
+    try {
+        const url = await getDownloadURL(starsRef);
+        return url;
+    } catch (err) {
+        return null;
+    }
+};
+
+export { addData, setData, getData, updateData, getBinaryURL };
