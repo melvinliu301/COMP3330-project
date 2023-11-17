@@ -1,5 +1,16 @@
 import { app } from "./base";
-import { getFirestore, collection, doc, getDocs, addDoc, setDoc, updateDoc, getDoc } from "firebase/firestore";
+import {
+    getFirestore,
+    collection,
+    doc,
+    getDocs,
+    addDoc,
+    setDoc,
+    updateDoc,
+    getDoc,
+} from "firebase/firestore";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+const storage = getStorage();
 
 const db = getFirestore(app);
 
@@ -10,6 +21,16 @@ const addData = async (collectionName, data) => {
 
 const setData = async (collectionName, id, data) => {
     await setDoc(doc(db, collectionName, id), data);
+};
+
+const getBinaryURL = async (path) => {
+    const starsRef = ref(storage, path);
+    try {
+        const url = await getDownloadURL(starsRef);
+        return url;
+    } catch (err) {
+        return null;
+    }
 };
 
 // e.g.
@@ -40,4 +61,4 @@ const updateData = async (collectionName, id, data) => {
     return docRef.id;
 }
 
-export {addData, setData, getData, updateData, getDataById };
+export {addData, setData, getData, updateData, getDataById, getBinaryURL};
