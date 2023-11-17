@@ -5,91 +5,13 @@ import { getData } from "../firebase/database";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
 import { useIsFocused } from "@react-navigation/native";
+// import {pluscircleo} from '@iconify-icons/ant-design';
 
 const Stack = createNativeStackNavigator();
 
 const List = ({navigation}) => {
 
     const isFocused = useIsFocused();
-
-    // remove later, for testing only
-    // const [data, setData] = useState([]);
-
-    // useEffect(() => {
-    //     getData("test").then((data) => {
-    //         setData(data);
-    //     });
-    // }, []);
-
-    // fake data for testing
-    const fakedata = [
-        {
-            id: "0001",
-            title: "Running",
-            catagory: ["Sports", "Fitness"],
-            creator: "Edan",
-            location: "Exit A, HKU Station",
-            datetime: "2023/12/14H10:00",
-            latitude: 22.283138717812534,
-            longitude: 114.13652991004479,
-            duration: "1",
-
-            expanded: false,
-        },
-        {
-            id: "0002",
-            title: "Dance Team Showcase",
-            catagory: ["Dance", "Performance"],
-            creator: "Ian",
-            location: "Lecture Hall 1, HKU",
-            datetime: "2023/11/19 12:00",
-            latitude: 22.283138717812534,
-            longitude: 114.13652991004479,
-            duration: "1",
-
-            expanded: false,
-        },
-        {
-            id: "0003",
-            title: "HKUBand Busking",
-            catagory: ["Music", "Performance"],
-            creator: "HKUBand",
-            location: "Main Building, HKU",
-            datetime: "2023/11/19 12:00",
-            latitude: 22.283138717812534,
-            longitude: 114.13652991004479,
-            duration: "2",
-
-            expanded: false,
-        },
-        {
-            id: "0004",
-            title: "EENG1340 Study Group",
-            catagory: ["Academic", "Study"],
-            creator: "Falculty of Engineering",
-            location: "Innovation Wing, HKU",
-            datetime: "2023/11/31 14:00",
-            latitude: 22.283138717812534,
-            longitude: 114.13652991004479,
-            duration: "3",
-
-            expanded: false,
-        },
-        {
-            id: "0005",
-            title: "testing",
-            catagory: ["Academic", "Study"],
-            creator: "Falculty of Engineering",
-            location: "Innovation Wing, HKU",
-            datetime: "2023/11/31 14:00",
-            latitude: 22.283138717812534,
-            longitude: 114.13652991004479,
-            duration: "3",
-
-            expanded: false,
-        },
-    ];
-    const [data, setData] = useState(fakedata);
 
     const [realData, setRealData] = useState([{}]);
 
@@ -152,7 +74,6 @@ const List = ({navigation}) => {
                         Category: {item.category}{'\n'}
 
                         Host: {item.creator}{'\n'}
-
                         
                     </Text>
                 </View>
@@ -166,11 +87,12 @@ const List = ({navigation}) => {
                 onPress={ () => toggleItemExpansion(item.id)}
             >
 
-                <View 
-                    style={styles.itemContainer}
-                >
+                <View style={styles.itemContainer}>
+
                     <Text style={{fontSize: 20}}>{item.title}</Text>
-                    {item.expanded && <Text>{showExpanded(item)}</Text>}
+                    <View style={{backgroundColor: 'white'}}>
+                        {item.expanded && <Text>{showExpanded(item)}</Text>}
+                    </View>
                 </View>
                 
             </TouchableOpacity>
@@ -209,6 +131,7 @@ const List = ({navigation}) => {
                     data={filteredData}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
+                    style={{flex: 1}}
                 />
             </View>
         );
@@ -217,11 +140,11 @@ const List = ({navigation}) => {
     return (
         <View style={styles.mainContainer}>
             <MyList />
-            <TouchableOpacity style={styles.createEventButton}
+            <Pressable style={styles.createEventButton}
                 onPress={() => navigation.navigate("CreateEvent")}
             >
                 <Text style={{fontSize: 16}}>Create Event</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     );
 };
@@ -229,6 +152,9 @@ const List = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     mainContainer: {
         flex: 1,
@@ -237,10 +163,12 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         borderWidth: 1,
-        borderColor: "orange",
+        borderColor: "darkorange",
         paddingVertical: 10,
         paddingHorizontal: 10,
         width: "100%",
+        alignItems: "stretch",
+        backgroundColor: "orange",
       },
     button: {
         alignItems: "center",
@@ -249,11 +177,13 @@ const styles = StyleSheet.create({
         
     },
     createEventButton: {
+        alignSelf: "center",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "lightgrey",
         paddingVertical: 10,
-        width: "100%",
+        marginVertical: 10,
+        width: "80%",
     },
 });
 
