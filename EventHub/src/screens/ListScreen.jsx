@@ -1,13 +1,16 @@
 import { useState, useEffect, Fragment } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TextInput, Button, TouchableOpacity, Pressable } from 'react-native';
-import { addData, getData } from "../firebase/database";
+import { getData } from "../firebase/database";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
+import { useIsFocused } from "@react-navigation/native";
 
 const Stack = createNativeStackNavigator();
 
 const List = ({navigation}) => {
+
+    const isFocused = useIsFocused();
 
     // remove later, for testing only
     // const [data, setData] = useState([]);
@@ -86,15 +89,32 @@ const List = ({navigation}) => {
             expanded: false,
         },
     ];
-
     const [data, setData] = useState(fakedata);
+
+    const [realData, setRealData] = useState([{}]);
+
+    useEffect(() => {
+        getData("Events").then((data) => {
+            const tempArray = [];
+            for (let i = 0; i < data.length; i++) {
+                const tempData = data[i].data();
+                tempData.id = data[i].id;
+                tempData.expanded = false;
+                tempArray.push(tempData);
+                
+            }
+            setRealData(tempArray);
+        });
+    }, [isFocused]);
+
+    console.log(realData);
 
     const MyList = () => {
         const [searchText, setSearchText] = useState('');
-        const [filteredData, setFilteredData] = useState(data);
+        const [filteredData, setFilteredData] = useState(realData); // switch to realData
       
         const handleSearch = () => {
-          const filtered = data.filter(item =>
+          const filtered = realData.filter(item =>  // switch to realData
             item.title.toLowerCase().includes(searchText.toLowerCase())
           );
           setFilteredData(filtered);
@@ -108,7 +128,7 @@ const List = ({navigation}) => {
         };
         
         const toggleItemExpansion = (id) => {
-            setData((prevData) =>
+            setRealData((prevData) =>   // switch to realData
                 prevData.map((item) => {
                     if (item.id === id) {
                         return { ...item, expanded: !item.expanded };
@@ -124,10 +144,15 @@ const List = ({navigation}) => {
                 <View>
                     <Text>
                         {'\n'}
+                        Description:{'\n'}{item.description}{'\n\n'}
                         Location: {item.location}{'\n'}
-                        Catagory: {item.catagory[0]}{'\n'}
-                        Event Holder: {item.creator}{'\n'}
-                        Date: {item.datetime}
+                        Date: {item.date}{'\n'}
+                        Time: {item.startTime} - {item.endTime}{'\n'}
+                        Participants: 0/{item.numOfParticipants}{'\n'}
+                        Category: {item.category}{'\n'}
+
+                        Host: {item.creator}{'\n'}
+
                         
                     </Text>
                 </View>
@@ -137,9 +162,13 @@ const List = ({navigation}) => {
 
         const renderItem = ({ item }) => (
             
-            <TouchableOpacity onPress={ () => toggleItemExpansion(item.id)}>
+            <TouchableOpacity 
+                onPress={ () => toggleItemExpansion(item.id)}
+            >
 
-                <View style={styles.itemContainer}>
+                <View 
+                    style={styles.itemContainer}
+                >
                     <Text style={{fontSize: 20}}>{item.title}</Text>
                     {item.expanded && <Text>{showExpanded(item)}</Text>}
                 </View>
@@ -179,7 +208,7 @@ const List = ({navigation}) => {
                     paddingTop={10}
                     data={filteredData}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={(item, index) => index.toString()}
                 />
             </View>
         );
@@ -188,16 +217,6 @@ const List = ({navigation}) => {
     return (
         <View style={styles.mainContainer}>
             <MyList />
-            {/* remove later, for testing only */}
-            {/* <Text>Test result (reading from database):</Text>
-            {data.map((item) => (
-                <Fragment key={item.id}>
-                    <Text>{"1: " + item.data().test1}</Text>
-                    <Text>{"2: " + item.data().test2}</Text>
-                    <Text>{"3: " + item.data().test3}</Text>
-                    <Text>{"4: " + item.data().test4}</Text>
-                </Fragment> */}
-            {/* ))} */}
             <TouchableOpacity style={styles.createEventButton}
                 onPress={() => navigation.navigate("CreateEvent")}
             >
@@ -267,6 +286,7 @@ const ListScreen = () => {
                         <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Event List</Text>
                     ),    
                 }}
+                un
             />
             <Stack.Screen 
                 name="CreateEvent" 
