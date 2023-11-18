@@ -153,6 +153,9 @@ const List = ({navigation}) => {
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
                     style={{flex: 1, alignSelf: 'center', width: '90%',}}
+                    ItemSeparatorComponent={() => (
+                        <View style={{height: 5}} />
+                    )}   
                 />
             </View>
         );
@@ -191,6 +194,7 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "stretch",
         backgroundColor: "orange",
+        borderRadius: 8,
       },
     button: {
         alignItems: "center",
