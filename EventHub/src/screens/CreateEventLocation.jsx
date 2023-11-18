@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
-import { addData } from "../firebase/database";
+import { addData, uploadFileFromLocalURI } from "../firebase/database";
 import { useRoute } from "@react-navigation/native";
 import Slider from "@react-native-community/slider";
 import * as ImagePicker from 'expo-image-picker';
@@ -27,6 +27,8 @@ const CreateEventLocation = ({navigation}) => {
       
           if (!result.canceled) {
             setImage(result.assets[0].uri);
+            // TODO: Remove the following test line and upload image when user actually save the event, change to a better file name
+            // uploadFileFromLocalURI(result.assets[0].uri, result.assets[0].fileName ?? ("img-" + new Date().getTime()));
             // firebase.storage().ref().child("images/" + result.assets[0].uri).put(result.assets[0]);
           }
     }
