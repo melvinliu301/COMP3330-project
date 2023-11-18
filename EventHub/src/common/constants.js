@@ -4,4 +4,12 @@ const ALLOWED_EMAILS = [
     "innowing@hku.hk",
 ];
 
-export { ALLOWED_EMAILS };
+const categoryColor = {
+    Sports: "lightgreen",
+    Study: "lightblue",
+    Arts: "pink",
+    Social: "yellow",
+    Leisure: "#e28743",
+}
+
+export { ALLOWED_EMAILS , categoryColor};

@@ -13,6 +13,9 @@ import { sendEmailVerification, signOut } from "firebase/auth";
 import { ALLOWED_EMAILS } from "../common/constants";
 import Dialog, { DialogContent } from "react-native-popup-dialog";
 import {getData, getDataById} from '../firebase/database';
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { categoryColor } from "../common/constants";
 
 export const getUserName = () => {
     return auth.currentUser.displayName;
@@ -71,7 +74,7 @@ const SettingScreen = () => {
                 onTouchOutside={() => {
                     setmyEventVisible(false);
                 }}
-                height={0.5} // = 50%
+                height={0.7} // = 70%
             >
                 <DialogContent>
                     <View style={styles.dialogView}>
@@ -80,13 +83,47 @@ const SettingScreen = () => {
                                 data={myEvents}
                                 style={{ flex: 1 }}
                                 renderItem={({ item }) => (
-                                    <View style={{borderWidth: 1, borderColor: "gray", borderRadius: 10, margin: 10}}>
-                                        <Text style={{fontSize: 24, fontWeight: "bold"}}>{item.title}</Text>
-                                        <Text style={{fontSize: 16}}>{item.description}</Text>
-                                        <Text style={{fontSize: 16}}>Date: {item.date}</Text>
-                                        <Text style={{fontSize: 16}}>Time: {item.startTime} - {item.endTime}</Text>
-                                        <Text style={{fontSize: 16}}>Location: {item.location}</Text>
-                                        <Text style={{fontSize: 16}}>Category: {item.category}</Text>
+                                    <View style={{borderWidth: 1, borderColor: "gray", borderRadius: 10, margin: 10, padding:10}}>
+                                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                            <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.title}</Text>
+                                            {item.verified && <Ionicons name="checkmark-circle-outline" size={24} color='green' />}
+                                        </View>
+                                        <View style={styles.smallerContainer}>
+                                            <View style={{flexDirection: 'row'}}>
+                                                <MaterialIcons name="connect-without-contact" size={16} />
+                                                <Text style={styles.infoText}> {item.host}</Text>
+                                            </View>
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Ionicons name="calendar" size={16} />
+                                                <Text style={styles.infoText}> {item.date}</Text>
+                                            </View>
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Ionicons name="time-outline" size={16} />
+                                                <Text style={styles.infoText}> {item.startTime}-{item.endTime}</Text>
+                                            </View>
+                                            
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Ionicons name="location" size={16} />
+                                                <Text style={styles.infoText}> {item.location}</Text>
+                                            </View>
+                                            
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Ionicons name="people" size={16} />
+                                                <Text style={styles.infoText}> {item.numOfParticipants?item.numOfParticipants:0}/{item.maxParticipants}</Text>
+                                            </View>
+                                            <View style={{flexDirection: 'row'}}>
+                                                <View style={{backgroundColor: categoryColor[item.category], borderRadius: 5, alignSelf: 'baseline', padding:5}}>
+                                                    <Text style={styles.infoText}> {item.category}</Text>
+                                                </View>
+                                                    {(item.course!=='') && <Text style={styles.infoText}>{item.course}</Text>}
+                                            </View>
+
+                                        </View>
+                                        
+                                        <Text style={{borderBottomColor:'gray',borderBottomWidth:1, fontSize:16}}>
+                                            Description:{'\n'}{item.description}{'\n'} 
+                                        </Text>
+                                        
                                     </View>
                                 )}
                                 keyExtractor={(item) => item.id}
@@ -188,6 +225,10 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: "white",
         justifyContent: "space-between",
+    },
+    smallerContainer: {
+        margin: 10,
+        paddingVertical: 10,
     },
     button: {
         alignSelf: "stretch",

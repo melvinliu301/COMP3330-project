@@ -8,6 +8,7 @@ import CreateEventLocation from "./CreateEventLocation";
 import { useIsFocused } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { categoryColor } from "../common/constants";
 import { auth } from "../firebase/auth";
 
 {/* ionicons:
@@ -30,14 +31,6 @@ const List = ({navigation}) => {
     const isFocused = useIsFocused();
 
     const [realData, setRealData] = useState([{}]);
-
-    const categoryColor = {
-        Sports: "lightgreen",
-        Study: "lightblue",
-        Arts: "pink",
-        Social: "yellow",
-        Leisure: "#e28743",
-    }
 
     useEffect(() => {
         getData("Events").then((data) => {
