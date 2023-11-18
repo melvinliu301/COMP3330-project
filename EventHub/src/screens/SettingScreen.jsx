@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Button, TouchableHighlight, Pressable, Text, FlatList } from "react-native";
-import { auth } from "../firebase/auth";
 import {
-    onAuthStateChanged,
-    sendEmailVerification,
-    signOut,
-} from "firebase/auth";
+    StyleSheet,
+    View,
+    Button,
+    TouchableHighlight,
+    Pressable,
+    Text,
+    FlatList,
+} from "react-native";
+import { auth } from "../firebase/auth";
+import { sendEmailVerification, signOut } from "firebase/auth";
 import { ALLOWED_EMAILS } from "../common/constants";
 import Dialog, { DialogContent } from "react-native-popup-dialog";
 import {getData, getDataById} from '../firebase/database';
@@ -15,31 +19,18 @@ export const getUserName = () => {
 };
 
 const SettingScreen = () => {
-
-    const [user, setUser] = useState(null);
+    const user = auth.currentUser;
     const [myEventVisible, setmyEventVisible] = useState(false);
     const [myEventsID, setmyEventsID] = useState([]);
     const [myEvents, setmyEvents] = useState([]);
 
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            console.log(user);
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
+        getDataById("Users", user.uid).then((data) => {
+            setmyEventsID(data.events);
         });
     }, []);
 
     useEffect(() => {
-        getDataById("Users", auth.currentUser.uid).then((data) => {
-            setmyEventsID(data.events);
-        });
-
-    }, {});
-
-    useEffect( () => {
         const tempArray = [];
         for (let i = 0; i < myEventsID.length; i++) {
             getDataById("Events", myEventsID[i]).then((data) => {
@@ -54,31 +45,33 @@ const SettingScreen = () => {
         await signOut(auth);
     };
 
+    const handleReloadUserProfile = async () => {
+        await user.reload();
+    };
+
     const handleVerifyEmail = async () => {
         await sendEmailVerification(user);
     };
 
     const editProfile = () => {
         console.log("edit profile");
-    }
+    };
 
     return (
         <View style={styles.container}>
-
-
             <Dialog
                 visible={myEventVisible}
-                onTouchOutside={() => {setmyEventVisible(false);}}
-                height={"50%"}
-                >
-                
+                onTouchOutside={() => {
+                    setmyEventVisible(false);
+                }}
+                height={0.5} // = 50%
+            >
                 <DialogContent>
                     <View style={styles.dialogView}>
-                        {
-                            myEvents.length > 0?
+                        {myEvents.length > 0 ? (
                             <FlatList
                                 data={myEvents}
-                                style = {{flex:1, }}
+                                style={{ flex: 1 }}
                                 renderItem={({ item }) => (
                                     <View style={{borderWidth: 1, borderColor: "gray", borderRadius: 10, margin: 10}}>
                                         <Text style={{fontSize: 24, fontWeight: "bold"}}>{item.title}</Text>
@@ -91,46 +84,73 @@ const SettingScreen = () => {
                                 )}
                                 keyExtractor={(item) => item.id}
                             />
-                            :<Text>You are not holding an event. Go and organize one!</Text>
-                        }
-                    
-                    
-                    </View> 
+                        ) : (
+                            <Text>
+                                You are not holding an event. Go and organize one!
+                            </Text>
+                        )}
+                    </View>
                 </DialogContent>
             </Dialog>
 
-
             {/*my profile*/}
             <View style={styles.myProfileView}>
-                <Text style={{fontSize:24, fontWeight: "bold"}}>My profile</Text>
+                <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+                    My profile
+                </Text>
                 <View style={{ flexDirection: "row" }}>
-                    <View style={{margin:10, flex:1}}>
+                    <View style={{ margin: 10, flex: 1 }}>
                         <Text>any profile pic</Text>
                     </View>
-                    <View style={{flex:3}}>
-                        {auth.currentUser.displayName?<Text style={styles.text}>{auth.currentUser.displayName}</Text>
-                        :<Text style={[styles.text,{fontStyle: "italic"}]}>Go give yourself a name!</Text>}
-                        <Text style={styles.text}>{auth.currentUser.email}</Text>
+                    <View style={{ flex: 3 }}>
+                        {user.displayName ? (
+                            <Text style={styles.text}>{user.displayName}</Text>
+                        ) : (
+                            <Text style={[styles.text, { fontStyle: "italic" }]}>
+                                Go give yourself a name!
+                            </Text>
+                        )}
+                        <Text style={styles.text}>{user.email}</Text>
+                        {user.emailVerified && (
+                            <Text style={{ ...styles.text, color: "green" }}>
+                                Verified
+                            </Text>
+                        )}
                     </View>
 
-
-                    <Pressable style={styles.editProfileButton} onPress={editProfile}>
+                    <Pressable
+                        style={styles.editProfileButton}
+                        onPress={editProfile}
+                    >
                         <Text style={styles.editProfileButtonText}>Edit</Text>
                     </Pressable>
-
                 </View>
             </View>
 
             {/*view my events*/}
             <View>
-                <Pressable style={styles.viewMyEventButton} onPress={() => setmyEventVisible(true)}>
-                    <Text style={styles.viewMyEventButtonText}>View My Events</Text>
+                <Pressable
+                    style={styles.viewMyEventButton}
+                    onPress={() => setmyEventVisible(true)}
+                >
+                    <Text style={styles.viewMyEventButtonText}>
+                        View My Events
+                    </Text>
                 </Pressable>
             </View>
 
+            {/*reload user profile*/}
+            <TouchableHighlight style={styles.touchableHighlight}>
+                <Button
+                    title="Reload user profile"
+                    mode="outlined"
+                    style={styles.button}
+                    onPress={handleReloadUserProfile}
+                />
+            </TouchableHighlight>
+
             {/*verify email*/}
-            {user &&
-                !user.emailVerified &&
+            {!user.emailVerified &&
                 ALLOWED_EMAILS.includes(user.email || "") && (
                     <TouchableHighlight style={styles.touchableHighlight}>
                         <Button
@@ -175,7 +195,7 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: "gray",
         borderRadius: 10,
-        padding:10,
+        padding: 10,
         margin: 10,
     },
     viewMyEventButton: {
@@ -195,9 +215,9 @@ const styles = StyleSheet.create({
     editProfileButton: {
         alignItems: "center",
         padding: 10,
-        margin:10, 
-        flex:1, 
-        alignSelf:'center',
+        margin: 10,
+        flex: 1,
+        alignSelf: "center",
         borderRadius: 10,
         backgroundColor: "orange",
     },
@@ -205,8 +225,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: "white",
-    }
-
+    },
 });
 
 export default SettingScreen;
