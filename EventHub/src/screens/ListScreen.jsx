@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
+import Collapsible from "react-native-collapsible";
 import { updateData, getData } from "../firebase/database";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
@@ -31,6 +32,7 @@ const List = ({navigation}) => {
     const isFocused = useIsFocused();
 
     const [realData, setRealData] = useState([{}]);
+
 
     useEffect(() => {
         getData("Events").then((data) => {
@@ -69,7 +71,7 @@ const List = ({navigation}) => {
           );
           setFilteredData(sorted);
         };
-        
+
         const toggleItemExpansion = (id) => {
             setFilteredData((prevData) =>   // switch to realData
                 prevData.map((item) => {
@@ -80,10 +82,9 @@ const List = ({navigation}) => {
                 })
             );
         };
+        
 
-        const showExpanded = (item) => {
-            
-            {/* show other fields in data */}
+        const showDetail = (item) => {
             return (
                 <View style={{width: 290, padding: 5}}>
 
@@ -135,13 +136,16 @@ const List = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
             );
-        };
+            }
 
 
         const renderItem = ({ item }) => (
             
             <TouchableOpacity 
-                onPress={ () => toggleItemExpansion(item.id)}
+                onPress={ () => {
+                    toggleItemExpansion(item.id);
+                }
+                }
             >
 
                 <View style={styles.itemContainer}>
@@ -150,7 +154,11 @@ const List = ({navigation}) => {
                         {item.verified && <Ionicons name="checkmark-circle-outline" size={24} color='green' />}
                     </View>
                     <View style={{backgroundColor: 'white'}}>
-                        {item.expanded && <Text>{showExpanded(item)}</Text>}
+                        <Collapsible
+                            collapsed={!item.expanded}
+                            align="center"
+                        >{showDetail(item)}</Collapsible>
+                        
                     </View>
                 </View>
                 
@@ -170,7 +178,7 @@ const List = ({navigation}) => {
                         width="auto"
                         borderBottomWidth={1}
                         borderBottomColor="gray"
-                        onChangeText={text => setSearchText(text)}
+                        onChangeText={text => { setSearchText(text);}}
                         
                     />
                     <Button
