@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, Platform } from "react-native";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Slider from "@react-native-community/slider";
@@ -21,7 +21,9 @@ const CreateEvent = ({navigation}) => {
     const [course, setCourse] = useState("");
     const [maxParticipants, setmaxParticipants] = useState(2);  // default value is 2
     const [eventCategory, seteventCategory] = useState("General");
-
+    const [showDatePicker, setShowDatePicker] = useState(Platform.OS === "ios");
+    const [showStartTimePicker, setShowStartTimePicker] = useState(Platform.OS === "ios");
+    const [showEndTimePicker, setShowEndTimePicker] = useState(Platform.OS === "ios");
 
     // for dropdown picker
     const [open, setOpen] = useState(false);
@@ -73,41 +75,68 @@ const CreateEvent = ({navigation}) => {
                 <View style={styles.rows}>
                     <Text style={styles.columnText}>Date</Text>
                     <View style={styles.dateTime}>
-                        <RNDateTimePicker 
-                            value={eventDate} 
-                            style={styles.dateTimeSelector}
-                            onChange={(event, selectedDate) => {
-                                seteventDate(selectedDate);
-                            }}
-                        />
+                        {Platform.OS !== "ios" && (
+                            <Button
+                                title={moment(eventDate).format("DD/MM/YYYY")}
+                                onPress={() => setShowDatePicker(true)}
+                            />
+                        )}
+                        {showDatePicker && (
+                            <RNDateTimePicker
+                                value={eventDate}
+                                style={styles.dateTimeSelector}
+                                onChange={(event, selectedDate) => {
+                                    seteventDate(selectedDate);
+                                    setShowDatePicker(Platform.OS === "ios");
+                                }}
+                            />
+                        )}
                     </View>
                 </View>
 
                 <View style={styles.rows}>
                     <Text style={styles.columnText}>Start Time</Text>
                     <View style={styles.dateTime}>
-                        <RNDateTimePicker 
-                            value={eventStartTime} 
-                            style={styles.dateTimeSelector}
-                            mode="time"
-                            onChange={(event, selectedTime) => {
-                                seteventStartTime(selectedTime);
-                            }}
-                        />
+                        {Platform.OS !== "ios" && (
+                            <Button
+                                title={moment(eventStartTime).format("HH:mm")}
+                                onPress={() => setShowStartTimePicker(true)}
+                            />
+                        )}
+                        {showStartTimePicker && (
+                            <RNDateTimePicker
+                                value={eventStartTime}
+                                style={styles.dateTimeSelector}
+                                mode="time"
+                                onChange={(event, selectedTime) => {
+                                    seteventStartTime(selectedTime);
+                                    setShowStartTimePicker(Platform.OS === "ios");
+                                }}
+                            />
+                        )}
                     </View>
                 </View>
 
                 <View style={styles.rows}>
                     <Text style={styles.columnText}>End Time</Text>
                     <View style={styles.dateTime}>
-                        <RNDateTimePicker 
-                            value={eventEndTime} 
-                            style={styles.dateTimeSelector}
-                            mode="time"
-                            onChange={(event, selectedTime) => {
-                                seteventEndTime(selectedTime);
-                            }}
-                        />
+                        {Platform.OS !== "ios" && (
+                            <Button
+                                title={moment(eventEndTime).format("HH:mm")}
+                                onPress={() => setShowEndTimePicker(true)}
+                            />
+                        )}
+                        {showEndTimePicker && (
+                            <RNDateTimePicker
+                                value={eventEndTime}
+                                style={styles.dateTimeSelector} 
+                                mode="time"
+                                onChange={(event, selectedTime) => {
+                                    seteventEndTime(selectedTime);
+                                    setShowEndTimePicker(Platform.OS === "ios");
+                                }}
+                            />
+                        )}
                     </View>
                 </View>
 
