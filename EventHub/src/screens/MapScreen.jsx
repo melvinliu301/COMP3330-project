@@ -5,9 +5,21 @@ import { StyleSheet, View, Image } from "react-native";
 import MapView from "react-native-maps";
 import { CustomMarker } from "../components/CustomMarker";
 import { getData, getBinaryURL } from "../firebase/database";
+import { FAB } from "react-native-elements";
 
 const MapScreen = () => {
     const [events, setEvents] = useState([]);
+
+    const fetchEvents = async () => {
+        const data = await getData("Events");
+        const events = data.map((docs) => docs.data());
+        for (const event of events) {
+            if (event?.imagePath) {
+                event.imageURL = await getBinaryURL(event?.imagePath);
+            }
+        }
+        setEvents(events);
+    };
 
     // Request for location service
     useEffect(() => {
@@ -20,20 +32,17 @@ const MapScreen = () => {
                 return;
             }
         })();
-        (async () => {
-            const data = await getData("Events");
-            const events = data.map((docs) => docs.data());
-            for (const event of events) {
-                if (event?.imagePath) {
-                    event.imageURL = await getBinaryURL(event?.imagePath);
-                }
-            }
-            setEvents(events);
-        })();
+        fetchEvents();
     }, []);
 
     return (
         <View style={styles.container}>
+            <FAB
+                style={styles.fab}
+                color="#FFA500"
+                icon={{ name: "refresh", color: "#FFFFFF" }}
+                onPress={() => fetchEvents()}
+            ></FAB>
             <MapView
                 style={{
                     width: "100%",
@@ -55,13 +64,14 @@ const MapScreen = () => {
                 showsUserLocation={true}
                 showsBuildings={false}
                 toolbarEnabled={false}
+                showsIndoorLevelPicker={false}
                 zoomControlEnabled={false}
             >
                 {events.map((event, i) => (
                     <CustomMarker
                         key={i}
-                        latitude={event?.latitude || 0}
-                        longitude={event?.longitude || 0}
+                        latitude={event?.latitude}
+                        longitude={event?.longitude}
                         radius={event?.radius}
                         title={event?.title}
                         description={event?.description}
@@ -78,6 +88,12 @@ const MapScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    fab: {
+        position: "absolute",
+        bottom: 10,
+        left: 10,
+        zIndex: 10000,
+    },
     container: {
         flex: 1,
         backgroundColor: "white",
