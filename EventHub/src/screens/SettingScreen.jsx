@@ -39,7 +39,7 @@ const SettingScreen = () => {
         getDataById("Users", user.uid).then((data) => {
             setmyEventsID(data.events);
         });
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         const tempArray = [];
