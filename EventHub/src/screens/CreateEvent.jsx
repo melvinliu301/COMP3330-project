@@ -5,6 +5,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import Slider from "@react-native-community/slider";
 import { addData } from "../firebase/database";
 import moment from "moment";
+import { getUserName } from "./SettingScreen";
 
 // updates needed: use map to select location, creator
 
@@ -166,6 +167,7 @@ const CreateEvent = ({navigation}) => {
                         course: course,
                         numOfParticipants: numOfParticipants,
                         category: eventCategory,
+                        host: getUserName(),
                     });
                     navigation.navigate("List")}
                 }

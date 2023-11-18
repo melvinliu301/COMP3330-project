@@ -73,7 +73,7 @@ const List = ({navigation}) => {
                         Participants: 0/{item.numOfParticipants}{'\n'}
                         Category: {item.category}{'\n'}
 
-                        Host: {item.creator}{'\n'}
+                        Host: {item.host}{'\n'}
                         
                     </Text>
                 </View>

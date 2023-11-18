@@ -10,6 +10,9 @@ import { ALLOWED_EMAILS } from "../common/constants";
 import Dialog, { DialogContent } from "react-native-popup-dialog";
 import {getData, getDataById} from '../firebase/database';
 
+export const getUserName = () => {
+    return auth.currentUser.displayName;
+};
 
 const SettingScreen = () => {
 
