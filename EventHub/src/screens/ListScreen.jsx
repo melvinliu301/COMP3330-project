@@ -4,6 +4,7 @@ import { FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
 import { updateData, getData } from "../firebase/database";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
+import CreateEventLocation from "./CreateEventLocation";
 import { useIsFocused } from "@react-navigation/native";
 // import {pluscircleo} from '@iconify-icons/ant-design';
 
@@ -165,7 +166,7 @@ const List = ({navigation}) => {
         <View style={styles.mainContainer}>
             <MyList />
             <TouchableOpacity style={styles.createEventButton}
-                onPress={() => navigation.navigate("CreateEvent")}
+                onPress={() => navigation.navigate("Event")}
             >
                 <Text style={{fontSize: 16}}>Create Event</Text>
             </TouchableOpacity>
@@ -254,11 +255,21 @@ const ListScreen = () => {
                 un
             />
             <Stack.Screen 
-                name="CreateEvent" 
+                name="Event" 
                 component={CreateEvent} 
                 options={{
                     headerTitle: () => (
                         <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Create Event</Text>
+                    ),    
+                }}
+            />
+
+            <Stack.Screen 
+                name="CreateEventLocation" 
+                component={CreateEventLocation} 
+                options={{
+                    headerTitle: () => (
+                        <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Select Location</Text>
                     ),    
                 }}
             />

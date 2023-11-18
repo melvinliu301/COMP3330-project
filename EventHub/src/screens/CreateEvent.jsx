@@ -157,7 +157,7 @@ const CreateEvent = ({navigation}) => {
 
             <TouchableOpacity style={styles.createEventButton}
                 onPress={() => {
-                    addData("Events", {
+                    const event = {
                         title: eventTitle,
                         description: eventDescription,
                         location: eventLocation,
@@ -169,11 +169,15 @@ const CreateEvent = ({navigation}) => {
                         maxParticipants: maxParticipants,
                         category: eventCategory,
                         host: getUserName(),
-                    });
-                    navigation.navigate("List")}
-                }
+                        radius: 10,               // default radius is 10
+                        latitude: 22.284023,    // default latitude: HKU Main Building
+                        longitude: 114.137753,  // default longitude: HKU Main Building
+                        imagePath: 'engineering_society.png'
+                    };
+                    navigation.navigate("CreateEventLocation", {event: event});
+                }}
             >
-                <Text style={{fontSize: 16}}>Save and Publish</Text>
+                <Text style={{fontSize: 16}}>Next</Text>
             </TouchableOpacity>
         </View>
     );
