@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { FlatList, TextInput, Button, TouchableOpacity, Pressable } from 'react-native';
+import { FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
 import { getData } from "../firebase/database";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
@@ -70,7 +70,7 @@ const List = ({navigation}) => {
                         Location: {item.location}{'\n'}
                         Date: {item.date}{'\n'}
                         Time: {item.startTime} - {item.endTime}{'\n'}
-                        Participants: 0/{item.numOfParticipants}{'\n'}
+                        Participants: {item.numOfParticipants}/{item.maxParticipants}{'\n'}
                         Category: {item.category}{'\n'}
 
                         Host: {item.host}{'\n'}
@@ -140,11 +140,11 @@ const List = ({navigation}) => {
     return (
         <View style={styles.mainContainer}>
             <MyList />
-            <Pressable style={styles.createEventButton}
+            <TouchableOpacity style={styles.createEventButton}
                 onPress={() => navigation.navigate("CreateEvent")}
             >
                 <Text style={{fontSize: 16}}>Create Event</Text>
-            </Pressable>
+            </TouchableOpacity>
         </View>
     );
 };

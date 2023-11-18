@@ -19,8 +19,8 @@ const CreateEvent = ({navigation}) => {
     const [eventStartTime, seteventStartTime] = useState(new Date());
     const [eventEndTime, seteventEndTime] = useState(new Date());
     const [course, setCourse] = useState("");
-    const [numOfParticipants, setnumOfParticipants] = useState(0);
-    const [eventCategory, seteventCategory] = useState([]);
+    const [maxParticipants, setmaxParticipants] = useState(2);  // default value is 2
+    const [eventCategory, seteventCategory] = useState("General");
 
 
     // for dropdown picker
@@ -34,7 +34,7 @@ const CreateEvent = ({navigation}) => {
     ]);
 
     console.log(eventTitle, eventDescription, eventLocation, eventDate.toLocaleDateString(), 
-    moment(eventStartTime).format("HH:mm"), moment(eventEndTime).format("HH:mm"), course, numOfParticipants, eventCategory);
+    moment(eventStartTime).format("HH:mm"), moment(eventEndTime).format("HH:mm"), course, maxParticipants, eventCategory);
 
     return (
         <View style={styles.container}>
@@ -124,15 +124,15 @@ const CreateEvent = ({navigation}) => {
                 <View style={styles.rows}>
                     <Text style={styles.columnText}>Number of Participants</Text>
                     <View style={styles.slider}>
-                        <Text style={{bottom: -8}}>{numOfParticipants}</Text>
+                        <Text style={{bottom: -8}}>{maxParticipants}</Text>
                         <Slider
                             style={{width: '100%', height: 10}}
-                            minimumValue={0}
+                            minimumValue={2}
                             maximumValue={100}
                             minimumTrackTintColor="orange"
                             maximumTrackTintColor="lightgrey"
-                            value={numOfParticipants}
-                            onValueChange={value => setnumOfParticipants(value)}
+                            value={maxParticipants}
+                            onValueChange={value => setmaxParticipants(value)}
                             step={1}
                         />
                     </View>
@@ -165,7 +165,8 @@ const CreateEvent = ({navigation}) => {
                         startTime: moment(eventStartTime).format("HH:mm"),
                         endTime: moment(eventEndTime).format("HH:mm"),
                         course: course,
-                        numOfParticipants: numOfParticipants,
+                        numOfParticipants: 1,
+                        maxParticipants: maxParticipants,
                         category: eventCategory,
                         host: getUserName(),
                     });
