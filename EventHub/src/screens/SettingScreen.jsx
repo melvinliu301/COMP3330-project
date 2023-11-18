@@ -19,7 +19,7 @@ export const getUserName = () => {
 };
 
 const SettingScreen = () => {
-    const user = auth.currentUser;
+    const [user, setUser] = useState(auth.currentUser);
     const [myEventVisible, setmyEventVisible] = useState(false);
     const [myEventsID, setmyEventsID] = useState([]);
     const [myEvents, setmyEvents] = useState([]);
@@ -45,8 +45,11 @@ const SettingScreen = () => {
         await signOut(auth);
     };
 
-    const handleReloadUserProfile = async () => {
-        await user.reload();
+    const handleReloadUserProfile = () => {
+        auth.currentUser.reload().then(() => {
+            // https://stackoverflow.com/questions/56266575/why-is-usestate-not-triggering-re-render
+            setUser({...auth.currentUser});
+        });
     };
 
     const handleVerifyEmail = async () => {
