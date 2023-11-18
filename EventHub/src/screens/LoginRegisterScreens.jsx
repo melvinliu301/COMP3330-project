@@ -50,10 +50,9 @@ const SignUpScreen = ({ navigation }) => {
                 await sendEmailVerification(userCredential.user);
             }
 
-            await updateProfile(userCredential.user,    {
+            await updateProfile(userCredential.user, {
                 displayName: username,
             });
-
 
             await setData("Users", userCredential.user.uid, {
                 username: username,

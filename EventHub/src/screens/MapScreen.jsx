@@ -60,8 +60,8 @@ const MapScreen = () => {
                 {events.map((event, i) => (
                     <CustomMarker
                         key={i}
-                        latitude={event?.latitude}
-                        longitude={event?.longitude}
+                        latitude={event?.latitude || 0}
+                        longitude={event?.longitude || 0}
                         radius={event?.radius}
                         title={event?.title}
                         description={event?.description}
