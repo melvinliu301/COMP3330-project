@@ -95,9 +95,17 @@ const SettingScreen = () => {
 
             {/*my profile*/}
             <View style={styles.myProfileView}>
-                <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-                    My profile
-                </Text>
+                <View style={{ flexDirection: "row" }}>
+                    <Text style={{ fontSize: 24, fontWeight: "bold", flex: 3 }}>
+                        My profile
+                    </Text>
+                    <Pressable
+                        style={styles.editProfileButton}
+                        onPress={editProfile}
+                    >
+                        <Text style={styles.editProfileButtonText}>Edit</Text>
+                    </Pressable>
+                </View>
                 <View style={{ flexDirection: "row" }}>
                     <View style={{ margin: 10, flex: 1 }}>
                         <Text>any profile pic</Text>
@@ -118,12 +126,6 @@ const SettingScreen = () => {
                         )}
                     </View>
 
-                    <Pressable
-                        style={styles.editProfileButton}
-                        onPress={editProfile}
-                    >
-                        <Text style={styles.editProfileButtonText}>Edit</Text>
-                    </Pressable>
                 </View>
             </View>
 
@@ -214,8 +216,7 @@ const styles = StyleSheet.create({
     },
     editProfileButton: {
         alignItems: "center",
-        padding: 10,
-        margin: 10,
+        padding: 5,
         flex: 1,
         alignSelf: "center",
         borderRadius: 10,

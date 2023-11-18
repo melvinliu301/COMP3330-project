@@ -131,7 +131,7 @@ const List = ({navigation}) => {
                     data={filteredData}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
-                    style={{flex: 1}}
+                    style={{flex: 1, alignSelf: 'center', width: '90%',}}
                 />
             </View>
         );
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        
     },
     mainContainer: {
         flex: 1,
