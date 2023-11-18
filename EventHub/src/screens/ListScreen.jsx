@@ -6,7 +6,16 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
 import CreateEventLocation from "./CreateEventLocation";
 import { useIsFocused } from "@react-navigation/native";
-// import {pluscircleo} from '@iconify-icons/ant-design';
+import Dialog, { DialogContent } from "react-native-popup-dialog";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
+{/* icon name list:
+    add-circle-outline
+    people
+    calendar
+    location
+    checkmark-circle-outline 
+*/}
 
 const Stack = createNativeStackNavigator();
 
@@ -16,15 +25,22 @@ const List = ({navigation}) => {
 
     const [realData, setRealData] = useState([{}]);
 
+    const catagoryColor = {
+        Sports: "lightgreen",
+        Study: "lightblue",
+        Arts: "pink",
+        Social: "yellow",
+        Leisure: "#e28743",
+    }
+
     useEffect(() => {
         getData("Events").then((data) => {
             const tempArray = [];
+        
             for (let i = 0; i < data.length; i++) {
                 const tempData = data[i].data();
                 tempData.id = data[i].id;
-                tempData.expanded = false;
                 tempArray.push(tempData);
-                
             }
             setRealData(tempArray);
         });
@@ -35,13 +51,21 @@ const List = ({navigation}) => {
     const MyList = () => {
         const [searchText, setSearchText] = useState('');
         const [filteredData, setFilteredData] = useState(realData); // switch to realData
-      
-        const handleSearch = () => {
-          const filtered = realData.filter(item =>  // switch to realData
-            item.title.toLowerCase().includes(searchText.toLowerCase())
-          );
-          setFilteredData(filtered);
-        };
+
+        const [visible, setVisible] = useState(false);
+
+        const [activeItem, setActiveItem] = useState({});
+
+        useEffect(() => {
+            if (searchText === '') {
+                setFilteredData(realData);
+            } else {
+                const filtered = realData.filter(item =>  // switch to realData
+                item.title.toLowerCase().includes(searchText.toLowerCase())
+                );
+                setFilteredData(filtered);
+            }
+        }, [searchText]);
       
         const handleSort = () => {
           const sorted = [...filteredData].sort((a, b) =>
@@ -49,56 +73,45 @@ const List = ({navigation}) => {
           );
           setFilteredData(sorted);
         };
-        
-        const toggleItemExpansion = (id) => {
-            setRealData((prevData) =>   // switch to realData
-                prevData.map((item) => {
-                    if (item.id === id) {
-                        return { ...item, expanded: !item.expanded };
-                    }
-                    return item;
-                })
-            );
-        };
 
-        const showExpanded = (item) => {
-            
-            {/* show other fields in data */}
+        const showDetails = (item) => {
+
             return (
-                <View style={{width: 290, padding: 5}}>
-                    <Text>
-                        Description:{'\n'}{item.description}{'\n'} 
-                    </Text>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View style={{width: 290, padding: 10, paddingTop:20}}>
+                        <Text style={{fontSize:20}}>{item.title}</Text>
                         <Text>
-                            Location: {'\n'}
-                            Date: {'\n'}
-                            Time: {'\n'}
-                            Participants: {'\n'}
-                            Category: {'\n'}
-                            Host: 
+                            Description:{'\n'}{item.description}{'\n'} 
                         </Text>
-                        <Text style={{width: 150}}>
-                                {item.location}{'\n'}
-                                {item.date}{'\n'}
-                                {item.startTime} - {item.endTime}{'\n'}
-                                {item.numOfParticipants}/{item.maxParticipants}{'\n'}
-                                {item.category}{'\n'}
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <Text>
+                                Location: {'\n'}
+                                Date: {'\n'}
+                                Time: {'\n'}
+                                Participants: {'\n'}
+                                Category: {'\n'}
+                                Host: 
+                            </Text>
+                            <Text style={{width: 150}}>
+                                    {item.location}{'\n'}
+                                    {item.date}{'\n'}
+                                    {item.startTime} - {item.endTime}{'\n'}
+                                    {item.numOfParticipants}/{item.maxParticipants}{'\n'}
+                                    {item.category}{'\n'}
 
-                                {item.host}
-                        </Text>
+                                    {item.host}
+                            </Text>
+                        </View>
+                        <TouchableOpacity 
+                            style={styles.joinButton}
+                            onPress={() => {
+                                updateData("Events", item.id, {
+                                    numOfParticipants: item.numOfParticipants + 1,
+                                });
+                            }}
+                        >
+                            <Text>Join</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity 
-                        style={styles.joinButton}
-                        onPress={() => {
-                            updateData("Events", item.id, {
-                                numOfParticipants: item.numOfParticipants + 1,
-                            });
-                        }}
-                    >
-                        <Text>Join</Text>
-                    </TouchableOpacity>
-                </View>
             );
         };
 
@@ -106,14 +119,36 @@ const List = ({navigation}) => {
         const renderItem = ({ item }) => (
             
             <TouchableOpacity 
-                onPress={ () => toggleItemExpansion(item.id)}
-            >
+                onPress={ () => {
+                        setActiveItem(item);
+                        setVisible(true);
+                    } 
+                }>
 
                 <View style={styles.itemContainer}>
 
                     <Text style={{fontSize: 20}}>{item.title}</Text>
-                    <View style={{backgroundColor: 'white'}}>
-                        {item.expanded && <Text>{showExpanded(item)}</Text>}
+                    <View style={styles.smallerContainer}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <View style={{flexDirection: 'row'}}>
+                                <Ionicons name="people" size={12} />
+                                <Text style={{fontSize: 12}}> {item.numOfParticipants?item.numOfParticipants:0}/{item.maxParticipants}</Text>
+                            </View>
+                            <View style={{flexDirection: 'row'}}>
+                                <Ionicons name="calendar" size={12} />
+                                <Text style={{fontSize: 12}}> {item.date} {item.startTime}-{item.endTime}</Text>
+                            </View>
+                        </View>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <View style={{flexDirection: 'row'}}>
+                                <Ionicons name="location" size={12} />
+                                <Text style={{fontSize: 12}}> {item.location}</Text>
+                            </View>
+                            <View style={{backgroundColor: catagoryColor[item.category], borderRadius: 5}}>
+                                <Text style={{fontSize: 12}}> {item.category}</Text>
+                            </View>
+
+                        </View>
                     </View>
                 </View>
                 
@@ -137,16 +172,22 @@ const List = ({navigation}) => {
                         
                     />
                     <Button
-                        title="Search" 
-                        flex={1} 
-
-                        onPress={handleSearch} />
-                    <Button
                         title="Sort" 
                         flex={1}
 
                         onPress={handleSort} />
                 </View>
+
+                <Dialog
+                    visible={visible}
+                    onTouchOutside={() => {
+                        setVisible(false);
+                    }}
+                >
+                    <DialogContent>
+                        {showDetails(activeItem)}
+                    </DialogContent>
+                </Dialog>
                 
                 <FlatList
                     paddingTop={10}
@@ -182,6 +223,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         
     },
+    smallContainer: {
+        padding: 5,
+        margin: 5,
+    },
     mainContainer: {
         flex: 1,
         backgroundColor: "white",
@@ -194,7 +239,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width: "100%",
         alignItems: "stretch",
-        backgroundColor: "orange",
+        backgroundColor: "white",
         borderRadius: 8,
       },
     button: {
@@ -213,11 +258,12 @@ const styles = StyleSheet.create({
         width: "80%",
     },
     joinButton: {
-        alignSelf: "flex-end",
+        alignSelf: "center",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "lightgreen",
         paddingVertical: 5,
+        marginTop: 20,
         width: 60,
         borderRadius: 5,
     },
