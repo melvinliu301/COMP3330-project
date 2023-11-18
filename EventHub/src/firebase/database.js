@@ -16,6 +16,7 @@ const db = getFirestore(app);
 
 const addData = async (collectionName, data) => {
     const docRef = await addDoc(collection(db, collectionName), data);
+
     return docRef.id;
 };
 

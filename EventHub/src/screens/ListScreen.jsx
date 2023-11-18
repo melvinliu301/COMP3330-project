@@ -130,6 +130,7 @@ const List = ({navigation}) => {
                             updateData("Events", item.id, {
                                 numOfParticipants: item.numOfParticipants + 1,
                             });
+                            
                             }}
                     >
                         <Text>Join</Text>
