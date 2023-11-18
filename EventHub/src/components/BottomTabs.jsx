@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Entypo } from '@expo/vector-icons'; 
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, Text } from "react-native";
 import MapScreen from "../screens/MapScreen";
 import ListScreen from "../screens/ListScreen";
 import SettingScreen from "../screens/SettingScreen";
@@ -52,10 +52,22 @@ const BottomTabs = () => {
                         tabBarIcon: ({focused}) => (
                             <Entypo name="map" size={28} color={focused ? "white" : "gray"} />
                         ),
-                        // headerTitle: () => (
-                        //     <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Custom title</Text>
-                        // ),
-                        // headerShown: true,
+                        headerTitle: () => (
+                             <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Event Map</Text>
+                        ),
+                        headerStyle: {
+                            backgroundColor: "orange",
+                            borderStyle: "solid",
+                            shadowColor: "transparent",
+                            height: 80,
+                        },
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                            fontSize: 20,
+                            color: "white",
+                        },
+                        headerTintColor: "white",
+                        headerShown: true,
                     }}
                 >
                     {() => <MapScreen/>}
@@ -82,10 +94,22 @@ const BottomTabs = () => {
                         tabBarIcon: ({focused}) => (
                             <Entypo name="user" size={28} color={focused ? "white" : "gray"} />
                         ),
-                        // headerTitle: () => (
-                        //     <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Custom title</Text>
-                        // ),
-                        // headerShown: true,
+                        headerTitle: () => (
+                            <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Settings</Text>
+                       ),
+                       headerStyle: {
+                           backgroundColor: "orange",
+                           borderStyle: "solid",
+                           shadowColor: "transparent",
+                           height: 80,
+                       },
+                       headerTitleStyle: {
+                           fontWeight: "bold",
+                           fontSize: 20,
+                           color: "white",
+                       },
+                       headerTintColor: "white",
+                       headerShown: true,
                     }}
                 >
                     {() => <SettingScreen/>}
