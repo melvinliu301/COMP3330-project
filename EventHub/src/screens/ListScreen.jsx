@@ -1,20 +1,28 @@
 import { useState, useEffect, Fragment } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
+import Collapsible from "react-native-collapsible";
 import { updateData, getData } from "../firebase/database";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
 import CreateEventLocation from "./CreateEventLocation";
 import { useIsFocused } from "@react-navigation/native";
-import Dialog, { DialogContent } from "react-native-popup-dialog";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { categoryColor } from "../common/constants";
+import { auth } from "../firebase/auth";
 
-{/* icon name list:
+{/* ionicons:
     add-circle-outline
     people
     calendar
     location
     checkmark-circle-outline 
+    information-circle-outline
+    time-outline
+
+    material icons:
+    connect-without-contact
 */}
 
 const Stack = createNativeStackNavigator();
@@ -25,22 +33,16 @@ const List = ({navigation}) => {
 
     const [realData, setRealData] = useState([{}]);
 
-    const catagoryColor = {
-        Sports: "lightgreen",
-        Study: "lightblue",
-        Arts: "pink",
-        Social: "yellow",
-        Leisure: "#e28743",
-    }
 
     useEffect(() => {
         getData("Events").then((data) => {
             const tempArray = [];
-        
             for (let i = 0; i < data.length; i++) {
                 const tempData = data[i].data();
                 tempData.id = data[i].id;
+                tempData.expanded = false;
                 tempArray.push(tempData);
+                
             }
             setRealData(tempArray);
         });
@@ -51,11 +53,7 @@ const List = ({navigation}) => {
     const MyList = () => {
         const [searchText, setSearchText] = useState('');
         const [filteredData, setFilteredData] = useState(realData); // switch to realData
-
-        const [visible, setVisible] = useState(false);
-
-        const [activeItem, setActiveItem] = useState({});
-
+      
         useEffect(() => {
             if (searchText === '') {
                 setFilteredData(realData);
@@ -74,81 +72,93 @@ const List = ({navigation}) => {
           setFilteredData(sorted);
         };
 
-        const showDetails = (item) => {
-
-            return (
-                    <View style={{width: 290, padding: 10, paddingTop:20}}>
-                        <Text style={{fontSize:20}}>{item.title}</Text>
-                        <Text>
-                            Description:{'\n'}{item.description}{'\n'} 
-                        </Text>
-                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <Text>
-                                Location: {'\n'}
-                                Date: {'\n'}
-                                Time: {'\n'}
-                                Participants: {'\n'}
-                                Category: {'\n'}
-                                Host: 
-                            </Text>
-                            <Text style={{width: 150}}>
-                                    {item.location}{'\n'}
-                                    {item.date}{'\n'}
-                                    {item.startTime} - {item.endTime}{'\n'}
-                                    {item.numOfParticipants}/{item.maxParticipants}{'\n'}
-                                    {item.category}{'\n'}
-
-                                    {item.host}
-                            </Text>
-                        </View>
-                        <TouchableOpacity 
-                            style={styles.joinButton}
-                            onPress={() => {
-                                updateData("Events", item.id, {
-                                    numOfParticipants: item.numOfParticipants + 1,
-                                });
-                            }}
-                        >
-                            <Text>Join</Text>
-                        </TouchableOpacity>
-                    </View>
+        const toggleItemExpansion = (id) => {
+            setFilteredData((prevData) =>   // switch to realData
+                prevData.map((item) => {
+                    if (item.id === id) {
+                        return { ...item, expanded: !item.expanded };
+                    }
+                    return item;
+                })
             );
         };
+        
+
+        const showDetail = (item) => {
+            return (
+                <View style={{width: 290, padding: 5}}>
+
+                    <View style={styles.smallerContainer}>
+                        <View style={{flexDirection: 'row'}}>
+                            <MaterialIcons name="connect-without-contact" size={16} />
+                            <Text style={styles.infoText}> {item.host}</Text>
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+                            <Ionicons name="calendar" size={16} />
+                            <Text style={styles.infoText}> {item.date}</Text>
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+                            <Ionicons name="time-outline" size={16} />
+                            <Text style={styles.infoText}> {item.startTime}-{item.endTime}</Text>
+                        </View>
+                        
+                        <View style={{flexDirection: 'row'}}>
+                            <Ionicons name="location" size={16} />
+                            <Text style={styles.infoText}> {item.location}</Text>
+                        </View>
+                        
+                        <View style={{flexDirection: 'row'}}>
+                            <Ionicons name="people" size={16} />
+                            <Text style={styles.infoText}> {item.numOfParticipants?item.numOfParticipants:0}/{item.maxParticipants}</Text>
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+                            <View style={{backgroundColor: categoryColor[item.category], borderRadius: 5, alignSelf: 'baseline', padding:5}}>
+                                <Text style={styles.infoText}> {item.category}</Text>
+                            </View>
+                                {(item.course!=='') && <Text style={styles.infoText}>{item.course}</Text>}
+                        </View>
+
+                    </View>
+                    
+                    <Text style={{borderBottomColor:'gray',borderBottomWidth:1, fontSize:16}}>
+                        Description:{'\n'}{item.description}{'\n'} 
+                    </Text>
+                    
+                    <TouchableOpacity 
+                        style={styles.joinButton}
+                        onPress={() => {
+                            updateData("Events", item.id, {
+                                numOfParticipants: item.numOfParticipants + 1,
+                            });
+                            }}
+                    >
+                        <Text>Join</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+            }
 
 
         const renderItem = ({ item }) => (
             
             <TouchableOpacity 
                 onPress={ () => {
-                        setActiveItem(item);
-                        setVisible(true);
-                    } 
-                }>
+                    toggleItemExpansion(item.id);
+                }
+                }
+            >
 
                 <View style={styles.itemContainer}>
-
-                    <Text style={{fontSize: 20}}>{item.title}</Text>
-                    <View style={styles.smallerContainer}>
-                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Ionicons name="people" size={12} />
-                                <Text style={{fontSize: 12}}> {item.numOfParticipants?item.numOfParticipants:0}/{item.maxParticipants}</Text>
-                            </View>
-                            <View style={{flexDirection: 'row'}}>
-                                <Ionicons name="calendar" size={12} />
-                                <Text style={{fontSize: 12}}> {item.date} {item.startTime}-{item.endTime}</Text>
-                            </View>
-                        </View>
-                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <View style={{flexDirection: 'row'}}>
-                                <Ionicons name="location" size={12} />
-                                <Text style={{fontSize: 12}}> {item.location}</Text>
-                            </View>
-                            <View style={{backgroundColor: catagoryColor[item.category], borderRadius: 5}}>
-                                <Text style={{fontSize: 12}}> {item.category}</Text>
-                            </View>
-
-                        </View>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.title}</Text>
+                        {item.verified && <Ionicons name="checkmark-circle-outline" size={24} color='green' />}
+                    </View>
+                    <View style={{backgroundColor: 'white'}}>
+                        <Collapsible
+                            collapsed={!item.expanded}
+                            align="center"
+                        >{showDetail(item)}</Collapsible>
+                        
                     </View>
                 </View>
                 
@@ -168,7 +178,7 @@ const List = ({navigation}) => {
                         width="auto"
                         borderBottomWidth={1}
                         borderBottomColor="gray"
-                        onChangeText={text => setSearchText(text)}
+                        onChangeText={text => { setSearchText(text);}}
                         
                     />
                     <Button
@@ -177,17 +187,6 @@ const List = ({navigation}) => {
 
                         onPress={handleSort} />
                 </View>
-
-                <Dialog
-                    visible={visible}
-                    onTouchOutside={() => {
-                        setVisible(false);
-                    }}
-                >
-                    <DialogContent>
-                        {showDetails(activeItem)}
-                    </DialogContent>
-                </Dialog>
                 
                 <FlatList
                     paddingTop={10}
@@ -209,7 +208,7 @@ const List = ({navigation}) => {
             <TouchableOpacity style={styles.createEventButton}
                 onPress={() => navigation.navigate("Event")}
             >
-                <Text style={{fontSize: 16}}>Create Event</Text>
+                <Text style={{fontSize:16}}>Create Event</Text>
             </TouchableOpacity>
         </View>
     );
@@ -227,13 +226,17 @@ const styles = StyleSheet.create({
         padding: 5,
         margin: 5,
     },
+    infoText: {
+        fontSize: 16,
+        padding: 3,
+    },
     mainContainer: {
         flex: 1,
         backgroundColor: "white",
         justifyContent: "space-between",
     },
     itemContainer: {
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "darkorange",
         paddingVertical: 10,
         paddingHorizontal: 10,
@@ -258,12 +261,11 @@ const styles = StyleSheet.create({
         width: "80%",
     },
     joinButton: {
-        alignSelf: "center",
+        alignSelf: "flex-end",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "lightgreen",
         paddingVertical: 5,
-        marginTop: 20,
         width: 60,
         borderRadius: 5,
     },
