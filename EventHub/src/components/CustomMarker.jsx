@@ -57,52 +57,55 @@ export const CustomMarker = ({
     endTime,
 }) => {
     return (
-        <>
-            <Marker
-                coordinate={{
-                    latitude: latitude,
-                    longitude: longitude,
-                }}
-                // If not do so the circle will not be in the center
-                anchor={imageURL && { x: 0.5, y: 0.5 }}
-                calloutAnchor={imageURL && { x: 0.5, y: 0 }}
-            >
-                {imageURL && (
-                    <Image
-                        source={{ uri: imageURL }}
-                        style={{
-                            ...styles.markerImage,
-                            borderColor: getColor(date, startTime, endTime),
-                        }}
-                    />
-                )}
-                <Callout tooltip>
-                    <View>
-                        <View style={styles.bubble}>
-                            <Text style={styles.title}>{truncate(title, 40)}</Text>
-                            <Text
-                                style={{
-                                    ...styles.time,
-                                    color: getColor(date, startTime, endTime),
-                                }}
-                            >
-                                {getTimeText(date, startTime, endTime)}
-                            </Text>
-                            <Text style={styles.description}>
-                                {truncate(description, 100)}
-                            </Text>
+        latitude &&
+        longitude && (
+            <>
+                <Marker
+                    coordinate={{
+                        latitude: latitude,
+                        longitude: longitude,
+                    }}
+                    // If not do so the circle will not be in the center
+                    anchor={imageURL && { x: 0.5, y: 0.5 }}
+                    calloutAnchor={imageURL && { x: 0.5, y: 0 }}
+                >
+                    {imageURL && (
+                        <Image
+                            source={{ uri: imageURL }}
+                            style={{
+                                ...styles.markerImage,
+                                borderColor: getColor(date, startTime, endTime),
+                            }}
+                        />
+                    )}
+                    <Callout tooltip>
+                        <View>
+                            <View style={styles.bubble}>
+                                <Text style={styles.title}>{truncate(title, 40)}</Text>
+                                <Text
+                                    style={{
+                                        ...styles.time,
+                                        color: getColor(date, startTime, endTime),
+                                    }}
+                                >
+                                    {getTimeText(date, startTime, endTime)}
+                                </Text>
+                                <Text style={styles.description}>
+                                    {truncate(description, 100)}
+                                </Text>
+                            </View>
                         </View>
-                    </View>
-                </Callout>
-            </Marker>
-            <Circle
-                center={{
-                    latitude: latitude,
-                    longitude: longitude,
-                }}
-                radius={imageURL ? radius + 25 : radius}
-            />
-        </>
+                    </Callout>
+                </Marker>
+                <Circle
+                    center={{
+                        latitude: latitude,
+                        longitude: longitude,
+                    }}
+                    radius={imageURL ? radius + 25 : radius}
+                />
+            </>
+        )
     );
 };
 
