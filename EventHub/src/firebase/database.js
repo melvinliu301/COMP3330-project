@@ -9,7 +9,8 @@ import {
     updateDoc,
     getDoc,
 } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+
 const storage = getStorage();
 
 const db = getFirestore(app);
@@ -23,6 +24,11 @@ const addData = async (collectionName, data) => {
 const setData = async (collectionName, id, data) => {
     await setDoc(doc(db, collectionName, id), data);
 };
+
+const uploadFileFromLocalURI = async (localURI, path) => {
+    let blob = await fetch(localURI).then(r => r.blob());
+    await uploadBytes(ref(storage, path), blob);
+}
 
 const getBinaryURL = async (path) => {
     const starsRef = ref(storage, path);
@@ -62,4 +68,4 @@ const updateData = async (collectionName, id, data) => {
     return docRef.id;
 }
 
-export {addData, setData, getData, updateData, getDataById, getBinaryURL};
+export {addData, setData, getData, updateData, getDataById, getBinaryURL, uploadFileFromLocalURI};
