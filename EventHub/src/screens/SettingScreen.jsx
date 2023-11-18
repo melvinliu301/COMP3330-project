@@ -18,6 +18,10 @@ export const getUserName = () => {
     return auth.currentUser.displayName;
 };
 
+export const getUserVerified = () => {
+    return auth.currentUser.emailVerified;
+};
+
 const SettingScreen = () => {
     const [user, setUser] = useState(auth.currentUser);
     const [myEventVisible, setmyEventVisible] = useState(false);

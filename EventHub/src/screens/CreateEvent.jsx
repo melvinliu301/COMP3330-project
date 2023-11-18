@@ -5,7 +5,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import Slider from "@react-native-community/slider";
 import { addData } from "../firebase/database";
 import moment from "moment";
-import { getUserName } from "./SettingScreen";
+import { getUserName, getUserVerified } from "./SettingScreen";
 
 // updates needed: use map to select location, creator
 
@@ -169,6 +169,7 @@ const CreateEvent = ({navigation}) => {
                         maxParticipants: maxParticipants,
                         category: eventCategory,
                         host: getUserName(),
+                        verified: getUserVerified(),
                         radius: 10,               // default radius is 10
                         latitude: 22.284023,    // default latitude: HKU Main Building
                         longitude: 114.137753,  // default longitude: HKU Main Building
