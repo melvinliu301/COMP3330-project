@@ -25,6 +25,10 @@ export const getUserVerified = () => {
     return auth.currentUser.emailVerified;
 };
 
+export const getUserID = () => {
+    return auth.currentUser.uid;
+};
+
 const SettingScreen = () => {
     const [user, setUser] = useState(auth.currentUser);
     const [myEventVisible, setmyEventVisible] = useState(false);

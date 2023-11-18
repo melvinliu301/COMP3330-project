@@ -2,10 +2,11 @@ import React, {useState} from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
-import { addData } from "../firebase/database";
+import { addData, updateData, getDataById } from "../firebase/database";
 import { useRoute } from "@react-navigation/native";
 import Slider from "@react-native-community/slider";
 import * as ImagePicker from 'expo-image-picker';
+import { getUserID } from "./SettingScreen";
 
 
 const CreateEventLocation = ({navigation}) => {
@@ -29,6 +30,13 @@ const CreateEventLocation = ({navigation}) => {
             setImage(result.assets[0].uri);
             // firebase.storage().ref().child("images/" + result.assets[0].uri).put(result.assets[0]);
           }
+    }
+
+    const publishEvent = async (updatedEvent) => {
+        const id = await addData("Events", updatedEvent);
+        const prevEventList = await getDataById("Users", getUserID()).then((data) => data.events);
+        updateData("Users", getUserID(), {events: [...prevEventList, id]});
+        navigation.navigate("List");
     }
 
     const route = useRoute();
@@ -112,8 +120,7 @@ const CreateEventLocation = ({navigation}) => {
             </MapView>
             <TouchableOpacity style={styles.createEventButton}
                 onPress={() => {
-                    addData("Events", updatedEvent);
-                    navigation.navigate("List");
+                    publishEvent(updatedEvent);
                 }}
             >
                 <Text style={{fontSize: 16}}>Save and Publish</Text>
