@@ -1,11 +1,17 @@
-import React from "react";
-import { Text, Image } from "react-native";
-import { Callout, Circle, Marker } from "react-native-maps";
-import { StyleSheet, View } from "react-native";
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
+import React from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { Callout, Circle, Marker } from "react-native-maps";
+import { VerifyLabel } from "../components/VerifyLabel";
 
 momentDurationFormatSetup(moment);
+
+const EventStatus = {
+    StartingSoon: 1,
+    OnGoing: 2,
+    Ended: 3,
+};
 
 function truncate(string, length) {
     if (string.length >= length) {
@@ -14,34 +20,50 @@ function truncate(string, length) {
     return string;
 }
 
-function getTimeText(date, startTime, endTime) {
+function getStatus(date, startTime, endTime) {
     const start = moment(`${date} ${startTime}`, "DD/MM/YYYY HH:mm");
     const end = moment(`${date} ${endTime}`, "DD/MM/YYYY HH:mm");
     const current = moment();
 
     if (current.isSameOrAfter(start) && current.isBefore(end)) {
-        return `End in ${moment.duration(end.diff(current)).format()}`;
+        return EventStatus.OnGoing;
     } else if (current.isBefore(start)) {
-        return `Start in ${moment.duration(start.diff(current)).format()}`;
+        return EventStatus.StartingSoon;
     } else {
-        return `Ended ${moment.duration(current.diff(end)).format()} ago`;
+        return EventStatus.Ended;
+    }
+}
+
+function getTimeText(date, startTime, endTime) {
+    const status = getStatus(date, startTime, endTime);
+    const start = moment(`${date} ${startTime}`, "DD/MM/YYYY HH:mm");
+    const end = moment(`${date} ${endTime}`, "DD/MM/YYYY HH:mm");
+    const current = moment();
+
+    switch (status) {
+        case EventStatus.OnGoing:
+            return `End in ${moment.duration(end.diff(current)).format()}`;
+        case EventStatus.StartingSoon:
+            return `Start in ${moment.duration(start.diff(current)).format()}`;
+        case EventStatus.Ended:
+            return `Ended ${moment.duration(current.diff(end)).format()} ago`;
+        default:
+            return "";
     }
 }
 
 function getColor(date, startTime, endTime) {
-    const start = moment(`${date} ${startTime}`, "DD/MM/YYYY HH:mm");
-    const end = moment(`${date} ${endTime}`, "DD/MM/YYYY HH:mm");
-    const current = moment();
+    const status = getStatus(date, startTime, endTime);
 
-    if (current.isSameOrAfter(start) && current.isBefore(end)) {
-        // Return green if the event is currently hosting
-        return "#248A3D";
-    } else if (current.isBefore(start)) {
-        // Return yellow if the event is going to host
-        return "#FFB340";
-    } else {
-        // Return red if the event ended
-        return "#D70015";
+    switch (status) {
+        case EventStatus.OnGoing:
+            return "#248A3D";
+        case EventStatus.StartingSoon:
+            return "#FFB340";
+        case EventStatus.Ended:
+            return "#D70015";
+        default:
+            return "#FFFFFF";
     }
 }
 
@@ -55,6 +77,7 @@ export const CustomMarker = ({
     date,
     startTime,
     endTime,
+    verified,
 }) => {
     return (
         latitude &&
@@ -78,6 +101,7 @@ export const CustomMarker = ({
                             }}
                         />
                     )}
+                    {verified && <VerifyLabel />}
                     <Callout tooltip>
                         <View>
                             <View style={styles.bubble}>
@@ -135,5 +159,6 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 50,
         borderWidth: 2,
+        filter: "grayscale(100%)",
     },
 });

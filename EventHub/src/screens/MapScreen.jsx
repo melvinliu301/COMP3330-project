@@ -79,6 +79,7 @@ const MapScreen = () => {
                         date={event?.date}
                         startTime={event?.startTime}
                         endTime={event?.endTime}
+                        verified={event?.verified}
                     />
                 ))}
             </MapView>
