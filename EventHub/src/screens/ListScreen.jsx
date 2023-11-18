@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
-import { getData } from "../firebase/database";
+import { updateData, getData } from "../firebase/database";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateEvent from "./CreateEvent";
 import { useIsFocused } from "@react-navigation/native";
@@ -61,21 +61,42 @@ const List = ({navigation}) => {
         };
 
         const showExpanded = (item) => {
+            
             {/* show other fields in data */}
             return (
-                <View>
+                <View style={{width: 290, padding: 5}}>
                     <Text>
-                        {'\n'}
-                        Description:{'\n'}{item.description}{'\n\n'}
-                        Location: {item.location}{'\n'}
-                        Date: {item.date}{'\n'}
-                        Time: {item.startTime} - {item.endTime}{'\n'}
-                        Participants: {item.numOfParticipants}/{item.maxParticipants}{'\n'}
-                        Category: {item.category}{'\n'}
-
-                        Host: {item.host}{'\n'}
-                        
+                        Description:{'\n'}{item.description}{'\n'} 
                     </Text>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Text>
+                            Location: {'\n'}
+                            Date: {'\n'}
+                            Time: {'\n'}
+                            Participants: {'\n'}
+                            Category: {'\n'}
+                            Host: 
+                        </Text>
+                        <Text style={{width: 150}}>
+                                {item.location}{'\n'}
+                                {item.date}{'\n'}
+                                {item.startTime} - {item.endTime}{'\n'}
+                                {item.numOfParticipants}/{item.maxParticipants}{'\n'}
+                                {item.category}{'\n'}
+
+                                {item.host}
+                        </Text>
+                    </View>
+                    <TouchableOpacity 
+                        style={styles.joinButton}
+                        onPress={() => {
+                            updateData("Events", item.id, {
+                                numOfParticipants: item.numOfParticipants + 1,
+                            });
+                        }}
+                    >
+                        <Text>Join</Text>
+                    </TouchableOpacity>
                 </View>
             );
         };
@@ -185,6 +206,15 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         marginVertical: 10,
         width: "80%",
+    },
+    joinButton: {
+        alignSelf: "flex-end",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "lightgreen",
+        paddingVertical: 5,
+        width: 60,
+        borderRadius: 5,
     },
 });
 
