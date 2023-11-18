@@ -5,11 +5,31 @@ import { Marker } from "react-native-maps";
 import { addData } from "../firebase/database";
 import { useRoute } from "@react-navigation/native";
 import Slider from "@react-native-community/slider";
+import * as ImagePicker from 'expo-image-picker';
+
 
 const CreateEventLocation = ({navigation}) => {
 
+
     const [eventLocation, seteventLocation] = useState(null);
     const [radius, setRadius] = useState(1);  // default value is 1
+    const [image, setImage] = useState(null);
+
+    const openImagePicker = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+          });
+      
+        //   console.log(result);
+      
+          if (!result.canceled) {
+            setImage(result.assets[0].uri);
+            // firebase.storage().ref().child("images/" + result.assets[0].uri).put(result.assets[0]);
+          }
+    }
 
     const route = useRoute();
     const event = route.params.event;
@@ -46,7 +66,14 @@ const CreateEventLocation = ({navigation}) => {
             <View style={styles.rows}>
                 <Text style={styles.columnText}>Event Photo</Text>
                 <View style={styles.columnInput}>
-                    <Text> to be updated </Text>
+                    {
+                        image === null ?
+                        <TouchableOpacity onPress={openImagePicker}>   
+                            <Text style={{fontSize: 16, color: "blue"}}>Upload</Text>
+                        </TouchableOpacity>
+                        :
+                        <Text>{image}</Text>
+                    }
                 </View>
             </View>
 
