@@ -6,6 +6,7 @@ import {
     TouchableHighlight,
     Button,
     StyleSheet,
+    Image,
 } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { auth } from "../firebase/auth";
@@ -20,6 +21,18 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { setData } from "../firebase/database";
 import { ALLOWED_EMAILS } from "../common/constants";
+
+const logoImage = () => {
+    return (
+        <Image source={require("../../assets/eventhub-logo.png")} style={{
+            width: 250,
+            height: 100,
+            resizeMode: 'contain',
+            marginBottom: 30,
+        }} />
+    );
+};
+
 
 const SignUpScreen = ({ navigation }) => {
     const [username, setUsername] = useState("");
@@ -73,6 +86,7 @@ const SignUpScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            {logoImage()}
             <Text style={styles.text}>Enter your username:</Text>
             <TextInput
                 style={styles.textInput}
@@ -192,6 +206,7 @@ const LoginScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            {logoImage()}
             <Text style={styles.text}>Enter your email:</Text>
             <TextInput
                 style={styles.textInput}
@@ -318,9 +333,10 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         borderColor: "gray",
         borderBottomWidth: 1,
+        marginHorizontal: 20,
     },
     touchableHighlight: {
-        marginBottom: 15,
+        marginVertical: 15,
     },
     dialogTitle: {
         backgroundColor: "#F7F7F8",

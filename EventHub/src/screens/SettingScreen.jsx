@@ -73,13 +73,15 @@ const EditProfileScreen = ({ navigation }) => {
 
     return (
         <View style={styles.editProfileContainer}>
-            <Text style={styles.text}>Update your username:</Text>
-            <TextInput
-                style={styles.textInput}
-                onChangeText={(text) => setUsername(text)}
-                value={username}
-                placeholder={user.displayName}
-            />
+            <View style={{alignItems:'flex-start', width: '100%'}}>
+                <Text style={{fontSize: 16, fontWeight: "bold",padding: 10}}>Update your username:</Text>
+                <TextInput
+                    style={styles.textInput}
+                    onChangeText={(text) => setUsername(text)}
+                    value={username}
+                    placeholder={user.displayName}
+                />
+            </View>
             
             <View style={styles.rows}>
                 <Text style={styles.columnText}>Update your profile picture:</Text>
@@ -400,9 +402,11 @@ const styles = StyleSheet.create({
     textInput: {
         height: 40,
         alignSelf: "stretch",
+        marginHorizontal: 10,
         marginBottom: 15,
         borderColor: "gray",
         borderBottomWidth: 1,
+        fontSize: 16,
     },
     columnText: {
         flex: 1,
