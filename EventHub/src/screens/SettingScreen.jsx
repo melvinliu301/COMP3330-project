@@ -6,16 +6,19 @@ import {
     TouchableHighlight,
     Pressable,
     Text,
+    TextInput,
     FlatList,
+    Image,
 } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { auth } from "../firebase/auth";
-import { sendEmailVerification, signOut } from "firebase/auth";
-import { ALLOWED_EMAILS } from "../common/constants";
+import { sendEmailVerification, signOut, updateProfile } from "firebase/auth";
+import { ALLOWED_EMAILS, categoryColor } from "../common/constants";
 import Dialog, { DialogContent } from "react-native-popup-dialog";
-import {getData, getDataById} from '../firebase/database';
+import { getDataById, uploadFileFromLocalURI, getBinaryURL } from '../firebase/database';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { categoryColor } from "../common/constants";
+import * as ImagePicker from 'expo-image-picker';
 
 export const getUserName = () => {
     return auth.currentUser.displayName;
@@ -29,7 +32,74 @@ export const getUserID = () => {
     return auth.currentUser.uid;
 };
 
-const SettingScreen = () => {
+const EditProfileScreen = ({ navigation }) => {
+    const [user, setUser] = useState(auth.currentUser);
+    const [username, setUsername] = useState(user.displayName);
+    const [imageURI, setImageURI] = useState(null);
+
+    const handleConfirmEditProfile = async () => {
+        let updatedUsername = username !== user.displayName ? username : null;
+
+        let updatedRemoteImageURL = null;
+        if (imageURI) {
+            const remoteImagePath = "profilePic/" + getUserID();
+            await uploadFileFromLocalURI(imageURI, remoteImagePath);
+            updatedRemoteImageURL = await getBinaryURL(remoteImagePath);
+        }
+
+        await updateProfile(auth.currentUser, {
+            ...(updatedUsername && { displayName: updatedUsername }),
+            ...(updatedRemoteImageURL && { photoURL: updatedRemoteImageURL })
+        });
+        setUser({...auth.currentUser});
+
+        navigation.goBack();
+    }
+
+    const handleSelectImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.cancelled) {
+            setImageURI(result.assets[0].uri);
+        }
+    }
+
+    return (
+        <View style={styles.editProfileContainer}>
+            <Text style={styles.text}>Update your username:</Text>
+            <TextInput
+                style={styles.textInput}
+                onChangeText={(text) => setUsername(text)}
+                value={username}
+                placeholder={user.displayName}
+            />
+            
+            <View style={styles.rows}>
+                <Text style={styles.columnText}>Update your profile picture:</Text>
+                {imageURI ? (
+                    <Image source={{uri: imageURI}} style={{width: 50, height: 50}} />
+                ) : (
+                    <Button
+                        style={styles.columnInput}
+                        title="Select"
+                        onPress={handleSelectImage}
+                    />
+                )}
+            </View>
+
+            <TouchableHighlight style={styles.touchableHighlight}>
+                <Button title="Confirm" onPress={handleConfirmEditProfile} />
+            </TouchableHighlight>
+        </View>
+    );
+};
+
+const BaseSettingScreen = ({ navigation }) => {
     const [user, setUser] = useState(auth.currentUser);
     const [myEventVisible, setmyEventVisible] = useState(false);
     const [myEventsID, setmyEventsID] = useState([]);
@@ -52,6 +122,13 @@ const SettingScreen = () => {
         console.log(tempArray);
     }, [myEventsID]);
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            setUser({...auth.currentUser});
+        });
+        return unsubscribe;
+    }, [navigation]);
+
     const handleSignOut = async () => {
         await signOut(auth);
     };
@@ -68,7 +145,7 @@ const SettingScreen = () => {
     };
 
     const editProfile = () => {
-        console.log("edit profile");
+        navigation.navigate("Edit Profile");
     };
 
     return (
@@ -156,7 +233,14 @@ const SettingScreen = () => {
                 </View>
                 <View style={{ flexDirection: "row" }}>
                     <View style={{ margin: 10, flex: 1 }}>
-                        <Text>any profile pic</Text>
+                        {user.photoURL ? (
+                            <Image
+                                source={{ uri: user.photoURL }}
+                                style={{ width: 80, height: 80 }}
+                            />
+                        ) : (
+                            <Text>No picture</Text>
+                        )}
                     </View>
                     <View style={{ flex: 3 }}>
                         {user.displayName ? (
@@ -225,10 +309,70 @@ const SettingScreen = () => {
     );
 };
 
+const Stack = createNativeStackNavigator();
+
+const createHeaderTitle = (title) => {
+    return (
+        <Text
+            style={{
+                color: "white",
+                fontSize: 20,
+                fontWeight: "bold",
+            }}
+        >
+            {title}
+        </Text>
+    );
+};
+
+const SettingScreen = () => {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: "orange",
+                    borderStyle: "solid",
+                    shadowColor: "transparent",
+                    height: 43.5,
+                },
+                headerTitleStyle: {
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    color: "white",
+                },
+                headerTintColor: "white",
+            }}
+            initialRouteName="Login"
+        >
+            <Stack.Screen
+                name="Base Setting"
+                component={BaseSettingScreen}
+                options={{
+                    headerTitle: () => createHeaderTitle("Settings"),
+                }}
+            />
+            <Stack.Screen
+                name="Edit Profile"
+                component={EditProfileScreen}
+                options={{
+                    headerTitle: () => createHeaderTitle("Edit Profile"),
+                }}
+            />
+        </Stack.Navigator>
+    );
+};
+
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "white",
         justifyContent: "space-between",
+    },
+    editProfileContainer: {
+        flex: 1,
+        backgroundColor: "white",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 15,
     },
     smallerContainer: {
         margin: 10,
@@ -250,6 +394,33 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 16,
         padding: 10,
+    },
+    textInput: {
+        height: 40,
+        alignSelf: "stretch",
+        marginBottom: 15,
+        borderColor: "gray",
+        borderBottomWidth: 1,
+    },
+    columnText: {
+        flex: 1,
+        minWidth: 20,
+        fontSize: 16,
+        fontWeight: "bold",
+        marginHorizontal: 10,
+    },
+    columnInput: {
+        flex: 3,
+        marginHorizontal: 10,
+        borderBottomWidth: 1,
+    },
+    rows: {
+        flexDirection: "row",
+        // paddingHorizontal: 10,
+        width: "100%",
+        alignItems: "center",
+        height: 40,
+        marginVertical: 8,
     },
     touchableHighlight: {
         margin: 10,

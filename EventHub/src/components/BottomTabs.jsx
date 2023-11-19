@@ -96,24 +96,10 @@ const BottomTabs = () => {
                         tabBarIcon: ({focused}) => (
                             <Entypo name="user" size={28} color={focused ? "white" : "gray"} />
                         ),
-                        ...(Platform.OS === "android" && {
-                            headerTitle: () => (
-                                <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Settings</Text>
-                            ),
-                            headerStyle: {
-                                backgroundColor: "orange",
-                                borderStyle: "solid",
-                                shadowColor: "transparent",
-                                height: 80,
-                            },
-                            headerTitleStyle: {
-                                fontWeight: "bold",
-                                fontSize: 20,
-                                color: "white",
-                            },
-                            headerTintColor: "white",
-                            headerShown: true,
-                        }),
+                        // headerTitle: () => (
+                        //     <Text style={{color: "white", fontSize: 20, fontWeight: "bold"}}>Custom title</Text>
+                        // ),
+                        headerShown: false,
                     }}
                 >
                     {() => <SettingScreen/>}
