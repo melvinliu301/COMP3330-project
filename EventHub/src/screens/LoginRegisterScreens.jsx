@@ -118,7 +118,7 @@ const SignUpScreen = ({ navigation }) => {
                     textStyle={{ textDecorationLine: "none" }}
                     style={{ marginBottom: 15 }}
                     onPress={setSendEmail}
-                    text="Verify email after sign up"
+                    text="Send verification email now"
                 />
             ) : (
                 <Text style={styles.text}>
