@@ -133,7 +133,7 @@ const List = ({navigation}) => {
                             
                             }}
                     >
-                        <Text>Join</Text>
+                        <Text style={{fontSize: 16, fontWeight: 'bold', color: 'white'}}>Join</Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -152,7 +152,7 @@ const List = ({navigation}) => {
                 <View style={styles.itemContainer}>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                         <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.title}</Text>
-                        {item.verified && <Ionicons name="checkmark-circle-outline" size={24} color='green' />}
+                        {item.verified && <Ionicons name="checkmark-circle-outline" size={30} color='green' />}
                     </View>
                     <View style={{backgroundColor: 'white'}}>
                         <Collapsible
@@ -209,7 +209,10 @@ const List = ({navigation}) => {
             <TouchableOpacity style={styles.createEventButton}
                 onPress={() => navigation.navigate("Event")}
             >
-                <Text style={{fontSize:16}}>Create Event</Text>
+                <View style={{flexDirection: 'row'}}>
+                    <Text style={{fontSize:16, fontWeight: 'bold', color: 'white'}}>Create Event  </Text>
+                    <Ionicons name="add-circle-outline" size={18} color={'white'} />
+                </View>
             </TouchableOpacity>
         </View>
     );
@@ -256,16 +259,17 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "lightgrey",
+        backgroundColor: "#03A9F4",
         paddingVertical: 10,
-        marginVertical: 10,
+        marginBottom: 10,
+        borderRadius: 5,
         width: "80%",
     },
     joinButton: {
-        alignSelf: "flex-end",
+        alignSelf: "center",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "lightgreen",
+        backgroundColor: "#32CD32",
         paddingVertical: 5,
         width: 60,
         borderRadius: 5,

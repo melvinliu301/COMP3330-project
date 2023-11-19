@@ -90,7 +90,7 @@ const SettingScreen = () => {
                                     <View style={{borderWidth: 1, borderColor: "gray", borderRadius: 10, margin: 10, padding:10}}>
                                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                             <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.title}</Text>
-                                            {item.verified && <Ionicons name="checkmark-circle-outline" size={24} color='green' />}
+                                            {item.verified && <Ionicons name="checkmark-circle-outline" size={30} color='green' />}
                                         </View>
                                         <View style={styles.smallerContainer}>
                                             <View style={{flexDirection: 'row'}}>
@@ -234,6 +234,15 @@ const styles = StyleSheet.create({
         margin: 10,
         paddingVertical: 10,
     },
+    dialogContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        width: "80%",
+        margin: 10,
+        borderWidth: 1,
+        borderColor: "red",
+    },
     button: {
         alignSelf: "stretch",
         borderRaius: 2,
@@ -265,6 +274,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
+        width: "100%",
+        alignSelf: "center",
     },
     editProfileButton: {
         alignItems: "center",
