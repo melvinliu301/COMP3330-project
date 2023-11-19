@@ -5,6 +5,8 @@ import LoginRegisterScreens from "./src/screens/LoginRegisterScreens";
 import { NavigationContainer } from "@react-navigation/native";
 import { auth } from "./src/firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const App = () => {
     const [user, setUser] = useState(null);
