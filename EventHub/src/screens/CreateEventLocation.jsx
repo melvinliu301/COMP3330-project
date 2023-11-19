@@ -34,10 +34,11 @@ const CreateEventLocation = ({navigation}) => {
     const publishEvent = async (updatedEvent) => {
         const id = await addData("Events", updatedEvent);
         const prevEventList = await getDataById("Users", getUserID()).then((data) => data.events);
-        const msg = await uploadFileFromLocalURI(image, imageName);
-        console.log("message: ", msg);
+        const msg = "";
+        image === null?
+        msg = await uploadFileFromLocalURI(image, imageName)
+        : null;
         updateData("Users", getUserID(), {events: [...prevEventList, id]});
-        navigation.navigate("List");
     }
 
     const route = useRoute();
@@ -127,6 +128,7 @@ const CreateEventLocation = ({navigation}) => {
             <TouchableOpacity style={styles.createEventButton}
                 onPress={() => {
                     publishEvent(updatedEvent);
+                    navigation.navigate("List");
                 }}
             >
                 <Text style={{fontSize: 16}}>Save and Publish</Text>

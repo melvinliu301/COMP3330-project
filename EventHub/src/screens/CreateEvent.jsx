@@ -215,7 +215,7 @@ const CreateEvent = ({ navigation }) => {
                         radius: 10, // default radius is 10
                         latitude: 22.284023, // default latitude: HKU Main Building
                         longitude: 114.137753, // default longitude: HKU Main Building
-                        imagePath: "engineering_society.png",
+                        imagePath: "User-Icon-Grey-300x300.png",
                     };
                     navigation.navigate("CreateEventLocation", { event: event });
                 }}
