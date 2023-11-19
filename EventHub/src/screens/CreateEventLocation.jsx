@@ -28,15 +28,14 @@ const CreateEventLocation = ({navigation}) => {
       
           if (!result.canceled) {
             setImage(result.assets[0].uri);
-            // TODO: Remove the following test line and upload image when user actually save the event, change to a better file name
-            // uploadFileFromLocalURI(result.assets[0].uri, result.assets[0].fileName ?? ("img-" + new Date().getTime()));
-            // firebase.storage().ref().child("images/" + result.assets[0].uri).put(result.assets[0]);
           }
     }
 
     const publishEvent = async (updatedEvent) => {
         const id = await addData("Events", updatedEvent);
         const prevEventList = await getDataById("Users", getUserID()).then((data) => data.events);
+        const msg = await uploadFileFromLocalURI(image, imageName);
+        console.log("message: ", msg);
         updateData("Users", getUserID(), {events: [...prevEventList, id]});
         navigation.navigate("List");
     }
@@ -44,9 +43,14 @@ const CreateEventLocation = ({navigation}) => {
     const route = useRoute();
     const event = route.params.event;
     let updatedEvent = event;
+    const imageName = "img-" + event.host + "-" + event.title;
 
     eventLocation? 
     updatedEvent = {...event, latitude: eventLocation.latitude, longitude: eventLocation.longitude}
+    : null;
+
+    image?
+    updatedEvent = {...updatedEvent, imagePath: imageName}
     : null;
 
     updatedEvent = {...updatedEvent, radius: radius};

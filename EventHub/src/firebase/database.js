@@ -28,6 +28,7 @@ const setData = async (collectionName, id, data) => {
 const uploadFileFromLocalURI = async (localURI, path) => {
     let blob = await fetch(localURI).then(r => r.blob());
     await uploadBytes(ref(storage, path), blob);
+    return "upload success";
 }
 
 const getBinaryURL = async (path) => {
