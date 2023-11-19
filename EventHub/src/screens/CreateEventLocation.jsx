@@ -36,8 +36,8 @@ const CreateEventLocation = ({navigation}) => {
         const prevEventList = await getDataById("Users", getUserID()).then((data) => data.events);
         const msg = "";
         image === null?
+        null :
         msg = await uploadFileFromLocalURI(image, imageName)
-        : null;
         updateData("Users", getUserID(), {events: [...prevEventList, id]});
     }
 
