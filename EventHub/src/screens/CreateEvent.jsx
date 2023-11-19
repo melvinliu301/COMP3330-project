@@ -11,9 +11,10 @@ import {
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import Slider from "@react-native-community/slider";
-import { addData } from "../firebase/database";
+import { getData } from "../firebase/database";
 import moment from "moment";
-import { getUserName, getUserVerified } from "./SettingScreen";
+import { getUserName, getUserVerified, getUserID } from "./SettingScreen";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 // updates needed: use map to select location, creator
 
@@ -30,6 +31,12 @@ const CreateEvent = ({ navigation }) => {
     const [showDatePicker, setShowDatePicker] = useState(Platform.OS === "ios");
     const [showStartTimePicker, setShowStartTimePicker] = useState(Platform.OS === "ios");
     const [showEndTimePicker, setShowEndTimePicker] = useState(Platform.OS === "ios");
+
+    const userHasProfilePic = async () => {
+        const userID = getUserID();
+        const profilePic = await getData("users", userID, "profilePic");
+        return profilePic;
+    };
 
     // for dropdown picker
     const [open, setOpen] = useState(false);
@@ -215,7 +222,10 @@ const CreateEvent = ({ navigation }) => {
                         radius: 10, // default radius is 10
                         latitude: 22.284023, // default latitude: HKU Main Building
                         longitude: 114.137753, // default longitude: HKU Main Building
-                        imagePath: "User-Icon-Grey-300x300.png",
+                        imagePath: userHasProfilePic() ? 
+                            ("profilePic/" + getUserID()) :
+                            "User-Icon-Grey-300x300.png",
+                        
                     };
                     navigation.navigate("CreateEventLocation", { event: event });
                 }}

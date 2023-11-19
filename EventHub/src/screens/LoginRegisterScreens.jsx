@@ -56,8 +56,8 @@ const SignUpScreen = ({ navigation }) => {
 
             await setData("Users", userCredential.user.uid, {
                 username: username,
-                joinedEvents: [],
-                createdEvents: [],
+                events: [],
+                profilePic: false
             });
 
             setSignUpSuccess(true);

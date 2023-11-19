@@ -15,7 +15,7 @@ import { auth } from "../firebase/auth";
 import { sendEmailVerification, signOut, updateProfile } from "firebase/auth";
 import { ALLOWED_EMAILS, categoryColor } from "../common/constants";
 import Dialog, { DialogContent } from "react-native-popup-dialog";
-import { getDataById, uploadFileFromLocalURI, getBinaryURL } from '../firebase/database';
+import { getDataById, uploadFileFromLocalURI, getBinaryURL, updateData } from '../firebase/database';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
@@ -39,12 +39,14 @@ const EditProfileScreen = ({ navigation }) => {
 
     const handleConfirmEditProfile = async () => {
         let updatedUsername = username !== user.displayName ? username : null;
+        updateData("Users", getUserID(), {username: username});
 
         let updatedRemoteImageURL = null;
         if (imageURI) {
             const remoteImagePath = "profilePic/" + getUserID();
             await uploadFileFromLocalURI(imageURI, remoteImagePath);
             updatedRemoteImageURL = await getBinaryURL(remoteImagePath);
+            updateData("Users", getUserID(), {profilePic: true});
         }
 
         await updateProfile(auth.currentUser, {
