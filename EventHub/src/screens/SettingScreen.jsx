@@ -134,7 +134,7 @@ const SettingScreen = () => {
                             />
                         ) : (
                             <Text>
-                                You are not holding an event. Go and organize one!
+                                You are not in any event. Host or Join one!
                             </Text>
                         )}
                     </View>

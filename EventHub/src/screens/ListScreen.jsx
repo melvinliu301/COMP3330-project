@@ -11,6 +11,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { categoryColor } from "../common/constants";
 import { auth } from "../firebase/auth";
+import { getDataById } from "../firebase/database";
 
 {/* ionicons:
     add-circle-outline
@@ -83,6 +84,15 @@ const List = ({navigation}) => {
             );
         };
         
+        const joinEvent = async (item) => {
+            updateData("Events", item.id, {
+                numOfParticipants: (item.numOfParticipants + 1),
+            });
+            const prevEventList = await getDataById("Users", auth.currentUser.uid).then((data) => data.events);
+            updateData("Users", auth.currentUser.uid, {
+                events: [...prevEventList, item.id],
+            });
+        }
 
         const showDetail = (item) => {
             return (
@@ -127,11 +137,8 @@ const List = ({navigation}) => {
                     <TouchableOpacity 
                         style={styles.joinButton}
                         onPress={() => {
-                            updateData("Events", item.id, {
-                                numOfParticipants: item.numOfParticipants + 1,
-                            });
-                            
-                            }}
+                            joinEvent(item);
+                        }}
                     >
                         <Text style={{fontSize: 16, fontWeight: 'bold', color: 'white'}}>Join</Text>
                     </TouchableOpacity>
