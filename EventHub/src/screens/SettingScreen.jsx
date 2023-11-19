@@ -145,7 +145,7 @@ const BaseSettingScreen = ({ navigation }) => {
     };
 
     const handleVerifyEmail = async () => {
-        await sendEmailVerification(user);
+        await sendEmailVerification(auth.currentUser);
     };
 
     const editProfile = () => {
