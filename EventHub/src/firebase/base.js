@@ -1,15 +1,14 @@
 import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "./credentials";
+import { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId } from "@env"
 
-// example format of firebaseConfig:
-// const firebaseConfig = {
-//     apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-//     authDomain: "xxx.firebaseapp.com",
-//     projectId: "xxx",
-//     storageBucket: "xxxx.appspot.com",
-//     messagingSenderId: "xxxxxxxxxxxx",
-//     appId: "x:xxxxxxxxxxxx:web:xxxxxxxxxxxxxxxxxxxx",
-// };
+const firebaseConfig = {
+    apiKey: apiKey,
+    authDomain: authDomain,
+    projectId: projectId,
+    storageBucket: storageBucket,
+    messagingSenderId: messagingSenderId,
+    appId: appId,
+};
 
 const app = initializeApp(firebaseConfig);
 
