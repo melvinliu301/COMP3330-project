@@ -9,6 +9,7 @@ import {
     TextInput,
     FlatList,
     Image,
+    TouchableOpacity,
 } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { auth } from "../firebase/auth";
@@ -206,8 +207,14 @@ const BaseSettingScreen = ({ navigation }) => {
                                         </View>
                                         
                                         <Text style={{borderBottomColor:'gray',borderBottomWidth:1, fontSize:16}}>
-                                            Description:{'\n'}{item.description}{'\n'} 
+                                            Description:{'\n'}{item.description}
                                         </Text>
+
+                                        <TouchableOpacity
+                                            style={styles.quitButton}
+                                        >
+                                            <Text style={{fontSize: 16, fontWeight: 'bold', color: 'white'}}>Quit</Text>
+                                        </TouchableOpacity>
                                         
                                     </View>
                                 )}
@@ -466,6 +473,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
         color: "white",
+    },
+    quitButton: {
+        alignSelf: "center",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "red",
+        paddingVertical: 5,
+        width: 60,
+        borderRadius: 5,
+        marginTop: 6,
     },
 });
 
