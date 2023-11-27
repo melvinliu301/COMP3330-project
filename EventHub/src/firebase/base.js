@@ -1,13 +1,15 @@
 import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "./credentials";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCnIkx_8KYaC2raBOx3nkibccL0_imdvZc",
-    authDomain: "eventhub-149ef.firebaseapp.com",
-    projectId: "eventhub-149ef",
-    storageBucket: "eventhub-149ef.appspot.com",
-    messagingSenderId: "82064936163",
-    appId: "1:82064936163:web:5bf3ce33c6c795f44f49d6",
-};
+// example format of firebaseConfig:
+// const firebaseConfig = {
+//     apiKey: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+//     authDomain: "xxx.firebaseapp.com",
+//     projectId: "xxx",
+//     storageBucket: "xxxx.appspot.com",
+//     messagingSenderId: "xxxxxxxxxxxx",
+//     appId: "x:xxxxxxxxxxxx:web:xxxxxxxxxxxxxxxxxxxx",
+// };
 
 const app = initializeApp(firebaseConfig);
 
